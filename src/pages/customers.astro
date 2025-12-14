@@ -1,0 +1,496 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Clientes" activeSection="customers">
+  <div class="px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Clientes</h1>
+          <p class="text-slate-500 dark:text-slate-400 text-sm">Gestión de clientes y sus suscripciones</p>
+        </div>
+      </div>
+      <button id="newCustomerBtn" class="btn-primary inline-flex items-center gap-2 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Nuevo Cliente
+      </button>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="relative overflow-hidden bg-gradient-to-br from-slate-600 to-slate-800 rounded-2xl p-5 text-white shadow-lg">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Total Clientes</span>
+          </div>
+          <p id="totalCustomers" class="text-3xl font-bold">0</p>
+        </div>
+      </div>
+      <div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl p-5 text-white shadow-lg shadow-emerald-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Con Suscripción</span>
+          </div>
+          <p id="activeCustomers" class="text-3xl font-bold">0</p>
+        </div>
+      </div>
+      <div class="relative overflow-hidden bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl p-5 text-white shadow-lg shadow-blue-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Nuevos Este Mes</span>
+          </div>
+          <p id="newThisMonth" class="text-3xl font-bold">0</p>
+        </div>
+      </div>
+      <div class="relative overflow-hidden bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg shadow-violet-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Ingresos Totales</span>
+          </div>
+          <p id="totalRevenue" class="text-3xl font-bold">0 €</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="mb-6">
+      <div class="bg-white dark:bg-slate-800/50 rounded-2xl border border-slate-200/80 dark:border-slate-700/50 p-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="lg:col-span-2">
+            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Buscar</label>
+            <div class="relative">
+              <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+              <input type="text" id="searchInput" placeholder="Nombre, email o empresa..." class="input-field w-full pl-10">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Estado Suscripción</label>
+            <select id="statusFilter" class="input-field w-full">
+              <option value="">Todos</option>
+              <option value="active">✅ Con suscripción</option>
+              <option value="inactive">⚠️ Sin suscripción</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Estado Cliente</label>
+            <select id="activeFilter" class="input-field w-full">
+              <option value="">Todos</option>
+              <option value="true">🟢 Activos</option>
+              <option value="false">🔴 Inactivos</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-700/50">
+          <p class="text-sm text-slate-500 dark:text-slate-400"><span id="filteredCount" class="font-semibold text-slate-700 dark:text-slate-300">0</span> clientes encontrados</p>
+          <button id="clearFilters" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium transition-colors">Limpiar filtros</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customers Table -->
+    <div class="bg-white dark:bg-slate-800/50 rounded-2xl border border-slate-200/80 dark:border-slate-700/50 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700/50">
+          <thead class="bg-slate-50/80 dark:bg-slate-900/50">
+            <tr>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Cliente</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Empresa</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Suscripción</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Estado</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Registro</th>
+              <th class="px-6 py-4 text-right text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="customersTableBody" class="divide-y divide-slate-100 dark:divide-slate-700/50">
+            <tr>
+              <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                <div class="flex flex-col items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-slate-400 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </div>
+                  <span>Cargando clientes...</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Customer Modal -->
+    <div id="customerModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+          <h2 id="modalTitle" class="text-xl font-bold text-slate-900 dark:text-white">Nuevo Cliente</h2>
+        </div>
+        <form id="customerForm" class="p-6 space-y-4">
+          <input type="hidden" id="customerId" />
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="sm:col-span-2">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nombre completo *</label>
+              <input type="text" id="fullName" required class="input-field w-full" placeholder="Juan Pérez" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email *</label>
+              <input type="email" id="email" required class="input-field w-full" placeholder="cliente@email.com" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Teléfono</label>
+              <input type="tel" id="phone" class="input-field w-full" placeholder="+34 600 000 000" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Empresa</label>
+              <input type="text" id="companyName" class="input-field w-full" placeholder="Empresa S.L." />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Dirección</label>
+              <input type="text" id="address" class="input-field w-full" placeholder="Calle Principal 123" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Ciudad</label>
+              <input type="text" id="city" class="input-field w-full" placeholder="Madrid" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">País</label>
+              <input type="text" id="country" class="input-field w-full" placeholder="España" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">NIF/CIF</label>
+              <input type="text" id="taxId" class="input-field w-full" placeholder="12345678A" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Estado</label>
+              <select id="isActive" class="input-field w-full">
+                <option value="true">Activo</option>
+                <option value="false">Inactivo</option>
+              </select>
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Notas</label>
+              <textarea id="notes" rows="3" class="input-field w-full" placeholder="Notas adicionales..."></textarea>
+            </div>
+          </div>
+
+          <div id="formError" class="hidden bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 px-4 py-3 rounded-lg text-sm"></div>
+
+          <div class="flex justify-end space-x-3 pt-4">
+            <button type="button" id="cancelBtn" class="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-primary">
+              Guardar Cliente
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { getCustomers, addCustomer, updateCustomer, deleteCustomer, searchCustomers, getSubscriptionsByCustomer, getDashboardStats, isReadOnly } from '../lib/supabase';
+    import type { Customer, UserRole } from '../lib/supabase';
+    import { checkAuth, isStaffUser } from '../lib/auth';
+    import { format } from 'date-fns';
+    import { es } from 'date-fns/locale';
+
+    let allCustomers: Customer[] = [];
+    let customerSubscriptions: Map<string, any[]> = new Map();
+    let readOnlyMode = false;
+
+    async function initAuth() {
+      const user = await checkAuth();
+      if (user && isStaffUser(user)) {
+        const role = user.profile?.role as UserRole;
+        readOnlyMode = isReadOnly(role);
+        
+        if (readOnlyMode) {
+          // Hide new customer button
+          const newBtn = document.getElementById('newCustomerBtn');
+          if (newBtn) newBtn.style.display = 'none';
+        }
+      }
+    }
+
+    function formatCurrency(amount: number): string {
+      return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(amount);
+    }
+
+    async function loadCustomers() {
+      allCustomers = await getCustomers();
+      
+      // Load subscriptions for each customer
+      for (const customer of allCustomers) {
+        const subs = await getSubscriptionsByCustomer(customer.id);
+        customerSubscriptions.set(customer.id, subs);
+      }
+      
+      renderCustomers(allCustomers);
+      updateStats();
+    }
+
+    async function updateStats() {
+      const stats = await getDashboardStats();
+      if (stats) {
+        document.getElementById('totalCustomers')!.textContent = stats.total_customers.toString();
+        document.getElementById('activeCustomers')!.textContent = stats.active_subscriptions.toString();
+        document.getElementById('newThisMonth')!.textContent = stats.new_customers_month.toString();
+        document.getElementById('totalRevenue')!.textContent = formatCurrency(stats.total_revenue);
+      }
+    }
+
+    function renderCustomers(customers: Customer[]) {
+      const tbody = document.getElementById('customersTableBody')!;
+      
+      if (customers.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+              No se encontraron clientes
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = customers.map(customer => {
+        const subs = customerSubscriptions.get(customer.id) || [];
+        const activeSub = subs.find(s => s.status === 'active');
+        
+        const statusBadge = activeSub 
+          ? `<span class="badge-success">${activeSub.product_name}</span>`
+          : customer.is_active 
+            ? '<span class="badge-warning">Sin suscripción</span>'
+            : '<span class="badge-danger">Inactivo</span>';
+
+        return `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+            <td class="px-6 py-4">
+              <div class="flex items-center">
+                <div class="h-10 w-10 flex-shrink-0 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
+                  <span class="text-indigo-600 dark:text-indigo-400 font-semibold text-sm">${customer.full_name.charAt(0).toUpperCase()}</span>
+                </div>
+                <div class="ml-4">
+                  <div class="text-sm font-medium text-slate-900 dark:text-white">${customer.full_name}</div>
+                  <div class="text-sm text-slate-500 dark:text-slate-400">${customer.email}</div>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+              ${customer.company_name || '-'}
+            </td>
+            <td class="px-6 py-4">
+              ${statusBadge}
+            </td>
+            <td class="px-6 py-4">
+              ${customer.is_active 
+                ? '<span class="inline-flex items-center text-green-600 dark:text-green-400"><span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>Activo</span>'
+                : '<span class="inline-flex items-center text-slate-400 dark:text-slate-500"><span class="w-2 h-2 bg-slate-300 dark:bg-slate-600 rounded-full mr-2"></span>Inactivo</span>'
+              }
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
+              ${format(new Date(customer.created_at), 'dd MMM yyyy', { locale: es })}
+            </td>
+            <td class="px-6 py-4 text-right text-sm font-medium space-x-2">
+              ${!readOnlyMode ? `<button onclick="editCustomer('${customer.id}')" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">Editar</button>` : ''}
+              <a href="/customers/${customer.id}" class="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">Ver</a>
+              ${!readOnlyMode ? `<button onclick="confirmDeleteCustomer('${customer.id}', '${customer.full_name.replace(/'/g, "\\'")}')" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">Eliminar</button>` : ''}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+    const statusFilter = document.getElementById('statusFilter') as HTMLSelectElement;
+    const activeFilter = document.getElementById('activeFilter') as HTMLSelectElement;
+    const filteredCount = document.getElementById('filteredCount');
+
+    function filterCustomers() {
+      const searchTerm = searchInput?.value.toLowerCase() || '';
+      const status = statusFilter?.value || '';
+      const activeStatus = activeFilter?.value || '';
+
+      let filtered = allCustomers;
+
+      if (searchTerm) {
+        filtered = filtered.filter(c => 
+          c.full_name.toLowerCase().includes(searchTerm) ||
+          c.email.toLowerCase().includes(searchTerm) ||
+          (c.company_name && c.company_name.toLowerCase().includes(searchTerm)) ||
+          (c.city && c.city.toLowerCase().includes(searchTerm)) ||
+          (c.country && c.country.toLowerCase().includes(searchTerm))
+        );
+      }
+
+      if (status === 'active') {
+        filtered = filtered.filter(c => {
+          const subs = customerSubscriptions.get(c.id) || [];
+          return subs.some(s => s.status === 'active');
+        });
+      } else if (status === 'inactive') {
+        filtered = filtered.filter(c => {
+          const subs = customerSubscriptions.get(c.id) || [];
+          return !subs.some(s => s.status === 'active');
+        });
+      }
+
+      if (activeStatus === 'true') {
+        filtered = filtered.filter(c => c.is_active === true);
+      } else if (activeStatus === 'false') {
+        filtered = filtered.filter(c => c.is_active === false);
+      }
+
+      if (filteredCount) {
+        filteredCount.textContent = filtered.length.toString();
+      }
+
+      renderCustomers(filtered);
+    }
+
+    searchInput?.addEventListener('input', filterCustomers);
+    statusFilter?.addEventListener('change', filterCustomers);
+    activeFilter?.addEventListener('change', filterCustomers);
+    
+    document.getElementById('clearFilters')?.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      if (statusFilter) statusFilter.value = '';
+      if (activeFilter) activeFilter.value = '';
+      filterCustomers();
+    });
+
+    // Modal functionality
+    const modal = document.getElementById('customerModal')!;
+    const form = document.getElementById('customerForm') as HTMLFormElement;
+    const newCustomerBtn = document.getElementById('newCustomerBtn')!;
+    const cancelBtn = document.getElementById('cancelBtn')!;
+
+    function openModal(customer?: Customer) {
+      const modalTitle = document.getElementById('modalTitle')!;
+      
+      if (customer) {
+        modalTitle.textContent = 'Editar Cliente';
+        (document.getElementById('customerId') as HTMLInputElement).value = customer.id;
+        (document.getElementById('fullName') as HTMLInputElement).value = customer.full_name;
+        (document.getElementById('email') as HTMLInputElement).value = customer.email;
+        (document.getElementById('phone') as HTMLInputElement).value = customer.phone || '';
+        (document.getElementById('companyName') as HTMLInputElement).value = customer.company_name || '';
+        (document.getElementById('address') as HTMLInputElement).value = customer.address || '';
+        (document.getElementById('city') as HTMLInputElement).value = customer.city || '';
+        (document.getElementById('country') as HTMLInputElement).value = customer.country || '';
+        (document.getElementById('taxId') as HTMLInputElement).value = customer.tax_id || '';
+        (document.getElementById('isActive') as HTMLSelectElement).value = customer.is_active.toString();
+        (document.getElementById('notes') as HTMLTextAreaElement).value = customer.notes || '';
+      } else {
+        modalTitle.textContent = 'Nuevo Cliente';
+        form.reset();
+        (document.getElementById('customerId') as HTMLInputElement).value = '';
+      }
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.getElementById('formError')!.classList.add('hidden');
+    }
+
+    newCustomerBtn.addEventListener('click', () => openModal());
+    cancelBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Make editCustomer available globally
+    (window as any).editCustomer = (id: string) => {
+      const customer = allCustomers.find(c => c.id === id);
+      if (customer) openModal(customer);
+    };
+
+    // Delete customer
+    (window as any).confirmDeleteCustomer = async (id: string, name: string) => {
+      if (confirm(`¿Estás seguro de que deseas eliminar al cliente "${name}"?\n\nEsta acción eliminará también sus suscripciones y licencias asociadas.`)) {
+        try {
+          const { error } = await deleteCustomer(id);
+          if (error) throw error;
+          await loadCustomers();
+        } catch (error: any) {
+          alert('Error al eliminar cliente: ' + (error.message || 'Error desconocido'));
+        }
+      }
+    };
+
+    // Form submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorEl = document.getElementById('formError')!;
+      errorEl.classList.add('hidden');
+
+      const customerId = (document.getElementById('customerId') as HTMLInputElement).value;
+      const customerData = {
+        full_name: (document.getElementById('fullName') as HTMLInputElement).value,
+        email: (document.getElementById('email') as HTMLInputElement).value,
+        phone: (document.getElementById('phone') as HTMLInputElement).value || undefined,
+        company_name: (document.getElementById('companyName') as HTMLInputElement).value || undefined,
+        address: (document.getElementById('address') as HTMLInputElement).value || undefined,
+        city: (document.getElementById('city') as HTMLInputElement).value || undefined,
+        country: (document.getElementById('country') as HTMLInputElement).value || undefined,
+        tax_id: (document.getElementById('taxId') as HTMLInputElement).value || undefined,
+        is_active: (document.getElementById('isActive') as HTMLSelectElement).value === 'true',
+        notes: (document.getElementById('notes') as HTMLTextAreaElement).value || undefined
+      };
+
+      try {
+        if (customerId) {
+          const { error } = await updateCustomer(customerId, customerData);
+          if (error) throw error;
+        } else {
+          const { error } = await addCustomer(customerData as any);
+          if (error) throw error;
+        }
+
+        closeModal();
+        await loadCustomers();
+      } catch (error: any) {
+        errorEl.textContent = error.message || 'Error al guardar cliente';
+        errorEl.classList.remove('hidden');
+      }
+    });
+
+    // Initial load
+    initAuth().then(() => loadCustomers());
+  </script>
+</DashboardLayout>

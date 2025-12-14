@@ -1,0 +1,778 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Metas" activeSection="goals">
+  <div class="px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-violet-500/30">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Metas y Objetivos</h1>
+          <p class="text-slate-500 dark:text-slate-400 text-sm">Define y monitorea los objetivos de tu empresa</p>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="relative">
+          <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <input type="text" id="searchGoals" placeholder="Buscar metas..." class="input-field w-64 pl-10">
+        </div>
+        <button id="addGoalBtn" class="btn-primary inline-flex items-center gap-2 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+          Nueva Meta
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="relative overflow-hidden bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg shadow-violet-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Activas</span>
+          </div>
+          <p class="text-3xl font-bold" id="activeCount">0</p>
+        </div>
+      </div>
+      <div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl p-5 text-white shadow-lg shadow-emerald-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Completadas</span>
+          </div>
+          <p class="text-3xl font-bold" id="completedCount">0</p>
+        </div>
+      </div>
+      <div class="relative overflow-hidden bg-gradient-to-br from-rose-500 to-red-600 rounded-2xl p-5 text-white shadow-lg shadow-rose-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Vencidas</span>
+          </div>
+          <p class="text-3xl font-bold" id="failedCount">0</p>
+        </div>
+      </div>
+      <div class="relative overflow-hidden bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl p-5 text-white shadow-lg shadow-amber-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Progreso Medio</span>
+          </div>
+          <p class="text-3xl font-bold" id="avgProgress">0%</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div class="flex flex-wrap gap-2">
+        <button class="goal-tab active" data-filter="all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+          Todas
+        </button>
+        <button class="goal-tab" data-filter="active">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          Activas
+        </button>
+        <button class="goal-tab" data-filter="completed">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          Completadas
+        </button>
+        <button class="goal-tab" data-filter="failed">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          Vencidas
+        </button>
+      </div>
+      <div class="flex items-center gap-2">
+        <select id="typeFilter" class="input-field text-sm py-2">
+          <option value="">Todos los tipos</option>
+          <option value="sales_revenue">💰 Ingresos</option>
+          <option value="sales_count">🛒 Ventas</option>
+          <option value="new_clients">👥 Clientes</option>
+          <option value="active_subscriptions">🔄 Suscripciones</option>
+          <option value="active_licenses">🔑 Licencias</option>
+          <option value="mrr">📈 MRR</option>
+          <option value="custom">⭐ Personalizada</option>
+        </select>
+        <select id="priorityFilter" class="input-field text-sm py-2">
+          <option value="">Todas las prioridades</option>
+          <option value="critical">🔴 Crítica</option>
+          <option value="high">🟠 Alta</option>
+          <option value="medium">🟡 Media</option>
+          <option value="low">🟢 Baja</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Goals Grid -->
+    <div id="goalsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div class="col-span-full flex items-center justify-center py-16">
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Goal Modal -->
+  <div id="goalModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between sticky top-0 bg-white dark:bg-slate-800 z-10">
+        <div>
+          <h2 id="modalTitle" class="text-xl font-bold text-slate-900 dark:text-white">Nueva Meta</h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Define objetivos vinculados a datos reales</p>
+        </div>
+        <button type="button" id="closeModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <form id="goalForm" class="p-6 space-y-6">
+        <input type="hidden" id="goalId">
+        
+        <!-- Título y descripción -->
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Título de la Meta *</label>
+            <input type="text" id="title" class="input-field w-full" placeholder="Ej: Alcanzar €10,000 en ventas mensuales" required>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Descripción</label>
+            <textarea id="description" rows="2" class="input-field w-full" placeholder="Detalles adicionales sobre esta meta..."></textarea>
+          </div>
+        </div>
+
+        <!-- Tipo de meta y vinculación -->
+        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl p-4 space-y-4">
+          <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+            <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+            Vinculación con Datos
+          </h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">Tipo de Meta *</label>
+              <select id="goalType" class="input-field w-full" required>
+                <optgroup label="💰 Ventas">
+                  <option value="sales_revenue">Ingresos por Ventas (€)</option>
+                  <option value="sales_count">Número de Ventas</option>
+                </optgroup>
+                <optgroup label="👥 Clientes">
+                  <option value="new_clients">Nuevos Clientes</option>
+                </optgroup>
+                <optgroup label="🔄 Suscripciones">
+                  <option value="active_subscriptions">Suscripciones Activas</option>
+                  <option value="mrr">MRR (Ingresos Recurrentes)</option>
+                </optgroup>
+                <optgroup label="🔑 Licencias">
+                  <option value="active_licenses">Licencias Activas</option>
+                </optgroup>
+                <optgroup label="⚠️ Pendientes">
+                  <option value="pending_payments">Cobros Pendientes (€)</option>
+                  <option value="pending_count">Cantidad Pendientes</option>
+                </optgroup>
+                <optgroup label="📦 Productos">
+                  <option value="products_sold">Productos Vendidos</option>
+                </optgroup>
+                <optgroup label="⭐ Otras">
+                  <option value="custom">Meta Personalizada</option>
+                </optgroup>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">Unidad de Medida</label>
+              <select id="unit" class="input-field w-full">
+                <option value="EUR">€ Euros</option>
+                <option value="units"># Unidades</option>
+                <option value="percent">% Porcentaje</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-lg border border-indigo-200 dark:border-indigo-800">
+            <input type="checkbox" id="autoCalculate" class="w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+            <div>
+              <label for="autoCalculate" class="text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">Calcular automáticamente</label>
+              <p class="text-xs text-slate-500 dark:text-slate-400">El valor actual se actualizará automáticamente desde los datos reales</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Valores objetivo -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Valor Objetivo *</label>
+            <input type="number" id="targetValue" step="0.01" min="0" class="input-field w-full text-lg font-semibold" placeholder="10000" required>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Valor Actual</label>
+            <input type="number" id="currentValue" step="0.01" min="0" value="0" class="input-field w-full text-lg" placeholder="0">
+            <p class="text-xs text-slate-500 mt-1" id="autoCalcHint">Se calculará automáticamente si está habilitado</p>
+          </div>
+        </div>
+        
+        <!-- Fechas -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              <span class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                Fecha Inicio *
+              </span>
+            </label>
+            <input type="date" id="startDate" class="input-field w-full" required>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              <span class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Fecha Límite *
+              </span>
+            </label>
+            <input type="date" id="endDate" class="input-field w-full" required>
+          </div>
+        </div>
+
+        <!-- Prioridad y color -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Prioridad</label>
+            <select id="priority" class="input-field w-full">
+              <option value="low">🟢 Baja</option>
+              <option value="medium" selected>🟡 Media</option>
+              <option value="high">🟠 Alta</option>
+              <option value="critical">🔴 Crítica</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Color</label>
+            <div class="flex gap-2">
+              <input type="color" id="goalColor" value="#6366f1" class="w-12 h-10 rounded-lg border border-slate-200 dark:border-slate-600 cursor-pointer">
+              <input type="text" id="goalColorText" value="#6366f1" class="input-field flex-1" placeholder="#6366f1">
+            </div>
+          </div>
+        </div>
+
+        <!-- Notificación -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Notificar al alcanzar</label>
+          <div class="flex items-center gap-3">
+            <input type="range" id="notifyPercentage" min="50" max="100" value="80" class="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700">
+            <span id="notifyValue" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 w-12 text-right">80%</span>
+          </div>
+        </div>
+        
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
+          <button type="button" id="cancelBtn" class="btn-secondary">Cancelar</button>
+          <button type="submit" class="btn-primary">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Guardar Meta
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div id="deleteModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md p-6">
+      <div class="w-14 h-14 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mx-auto mb-4">
+        <svg class="w-7 h-7 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+        </svg>
+      </div>
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white text-center mb-2">¿Eliminar Meta?</h2>
+      <p class="text-slate-600 dark:text-slate-400 text-center mb-6">Esta acción no se puede deshacer. La meta será eliminada permanentemente.</p>
+      <input type="hidden" id="deleteGoalId">
+      <div class="flex gap-3">
+        <button id="cancelDeleteBtn" class="btn-secondary flex-1">Cancelar</button>
+        <button id="confirmDeleteBtn" class="btn-danger flex-1">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .goal-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #64748b;
+      background: white;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .dark .goal-tab {
+      background: #1e293b;
+      border-color: #334155;
+      color: #94a3b8;
+    }
+    .goal-tab:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+    .dark .goal-tab:hover {
+      background: #334155;
+      border-color: #475569;
+    }
+    .goal-tab.active {
+      background: linear-gradient(to right, #8b5cf6, #6366f1);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 4px 12px -2px rgba(139, 92, 246, 0.4);
+    }
+    .goal-card {
+      background: white;
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 1px solid #f1f5f9;
+      transition: all 0.3s;
+    }
+    .dark .goal-card {
+      background: #1e293b;
+      border-color: #334155;
+    }
+    .goal-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+    }
+    .dark .goal-card:hover {
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
+    }
+    .progress-ring {
+      transform: rotate(-90deg);
+    }
+  </style>
+
+  <script>
+    import { getGoals, addGoal, updateGoal, deleteGoal, canManageGoals } from '../lib/supabase';
+    import { checkAuth } from '../lib/auth';
+    import { format, differenceInDays } from 'date-fns';
+    import { es } from 'date-fns/locale';
+
+    let currentUser: any = null;
+    let allGoals: any[] = [];
+    let canManage = false;
+
+    function formatCurrency(amount: number): string {
+      return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(amount);
+    }
+
+    function formatValue(value: number, unit: string): string {
+      if (unit === 'EUR') return formatCurrency(value);
+      if (unit === 'percent') return `${value}%`;
+      return value.toString();
+    }
+
+    const typeLabels: Record<string, string> = {
+      sales_revenue: 'Ingresos',
+      sales_count: 'Ventas',
+      new_clients: 'Clientes',
+      active_subscriptions: 'Suscripciones',
+      active_licenses: 'Licencias',
+      pending_payments: 'Pendientes €',
+      pending_count: 'Pendientes #',
+      products_sold: 'Productos',
+      mrr: 'MRR',
+      custom: 'Personalizada'
+    };
+
+    const typeColors: Record<string, string> = {
+      sales_revenue: 'from-emerald-400 to-green-600',
+      sales_count: 'from-green-400 to-teal-600',
+      new_clients: 'from-blue-400 to-indigo-600',
+      active_subscriptions: 'from-violet-400 to-purple-600',
+      active_licenses: 'from-cyan-400 to-blue-600',
+      pending_payments: 'from-rose-400 to-red-600',
+      pending_count: 'from-orange-400 to-red-500',
+      products_sold: 'from-amber-400 to-orange-600',
+      mrr: 'from-pink-400 to-rose-600',
+      custom: 'from-slate-400 to-slate-600'
+    };
+
+    const typeIcons: Record<string, string> = {
+      sales_revenue: '💰',
+      sales_count: '🛒',
+      new_clients: '👥',
+      active_subscriptions: '🔄',
+      active_licenses: '🔑',
+      pending_payments: '⚠️',
+      pending_count: '📋',
+      products_sold: '📦',
+      mrr: '📈',
+      custom: '⭐'
+    };
+
+    const priorityLabels: Record<string, { label: string; class: string }> = {
+      low: { label: 'Baja', class: 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300' },
+      medium: { label: 'Media', class: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
+      high: { label: 'Alta', class: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
+      critical: { label: 'Crítica', class: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' }
+    };
+
+    async function init() {
+      currentUser = await checkAuth();
+      if (!currentUser) return;
+
+      canManage = canManageGoals(currentUser.profile?.role);
+      
+      if (!canManage) {
+        document.getElementById('addGoalBtn')?.remove();
+      }
+
+      // Setup dates
+      const today = new Date();
+      (document.getElementById('startDate') as HTMLInputElement).value = today.toISOString().split('T')[0];
+      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      (document.getElementById('endDate') as HTMLInputElement).value = endOfMonth.toISOString().split('T')[0];
+
+      // Setup color picker sync
+      const colorInput = document.getElementById('goalColor') as HTMLInputElement;
+      const colorText = document.getElementById('goalColorText') as HTMLInputElement;
+      colorInput?.addEventListener('input', () => { colorText.value = colorInput.value; });
+      colorText?.addEventListener('input', () => { colorInput.value = colorText.value; });
+
+      // Setup notify percentage slider
+      const notifySlider = document.getElementById('notifyPercentage') as HTMLInputElement;
+      const notifyValue = document.getElementById('notifyValue') as HTMLElement;
+      notifySlider?.addEventListener('input', () => { notifyValue.textContent = `${notifySlider.value}%`; });
+
+      // Setup auto-calculate toggle
+      const autoCalc = document.getElementById('autoCalculate') as HTMLInputElement;
+      const currentValueInput = document.getElementById('currentValue') as HTMLInputElement;
+      autoCalc?.addEventListener('change', () => {
+        currentValueInput.disabled = autoCalc.checked;
+        currentValueInput.classList.toggle('opacity-50', autoCalc.checked);
+      });
+
+      await loadGoals();
+      setupTabs();
+    }
+
+    async function loadGoals() {
+      allGoals = await getGoals();
+      renderGoals(allGoals);
+      updateStats(allGoals);
+    }
+
+    let currentStatusFilter = 'all';
+    let currentTypeFilter = '';
+    let currentPriorityFilter = '';
+    let currentSearchTerm = '';
+
+    function applyAllFilters() {
+      let filtered = allGoals;
+      
+      // Status filter
+      if (currentStatusFilter === 'active') {
+        filtered = filtered.filter(g => g.progress_status === 'in_progress');
+      } else if (currentStatusFilter === 'completed') {
+        filtered = filtered.filter(g => g.progress_status === 'completed');
+      } else if (currentStatusFilter === 'failed') {
+        filtered = filtered.filter(g => g.progress_status === 'failed');
+      }
+      
+      // Type filter
+      if (currentTypeFilter) {
+        filtered = filtered.filter(g => g.type === currentTypeFilter);
+      }
+      
+      // Priority filter
+      if (currentPriorityFilter) {
+        filtered = filtered.filter(g => g.priority === currentPriorityFilter);
+      }
+      
+      // Search filter
+      if (currentSearchTerm) {
+        const term = currentSearchTerm.toLowerCase();
+        filtered = filtered.filter(g => 
+          g.title.toLowerCase().includes(term) ||
+          (g.description && g.description.toLowerCase().includes(term))
+        );
+      }
+      
+      renderGoals(filtered);
+    }
+
+    function setupTabs() {
+      // Status tabs
+      document.querySelectorAll('.goal-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.goal-tab').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentStatusFilter = (btn as HTMLElement).dataset.filter || 'all';
+          applyAllFilters();
+        });
+      });
+      
+      // Type filter
+      document.getElementById('typeFilter')?.addEventListener('change', (e) => {
+        currentTypeFilter = (e.target as HTMLSelectElement).value;
+        applyAllFilters();
+      });
+      
+      // Priority filter
+      document.getElementById('priorityFilter')?.addEventListener('change', (e) => {
+        currentPriorityFilter = (e.target as HTMLSelectElement).value;
+        applyAllFilters();
+      });
+      
+      // Search
+      document.getElementById('searchGoals')?.addEventListener('input', (e) => {
+        currentSearchTerm = (e.target as HTMLInputElement).value;
+        applyAllFilters();
+      });
+    }
+
+    function renderGoals(goals: any[]) {
+      const container = document.getElementById('goalsGrid')!;
+      
+      if (goals.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-16">
+            <div class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
+              <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No hay metas</h3>
+            <p class="text-slate-500 dark:text-slate-400 mb-4">Crea tu primera meta para empezar a hacer seguimiento</p>
+            ${canManage ? '<button onclick="document.getElementById(\'addGoalBtn\').click()" class="btn-primary">Crear Meta</button>' : ''}
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = goals.map(goal => {
+        const progress = goal.progress_percentage || 0;
+        const daysLeft = differenceInDays(new Date(goal.end_date), new Date());
+        const isOverdue = daysLeft < 0 && progress < 100;
+        const isCompleted = progress >= 100;
+        const priority = priorityLabels[goal.priority] || priorityLabels.medium;
+        const goalColor = goal.color || '#6366f1';
+
+        return `
+          <div class="goal-card group" style="--goal-color: ${goalColor}">
+            <div class="h-1.5" style="background: linear-gradient(to right, ${goalColor}, ${goalColor}dd)"></div>
+            <div class="p-5">
+              <div class="flex justify-between items-start mb-3">
+                <div class="flex items-start gap-3">
+                  <span class="text-2xl">${typeIcons[goal.type] || '⭐'}</span>
+                  <div>
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wide">${typeLabels[goal.type] || goal.type}</span>
+                      ${goal.auto_calculate ? '<span class="text-xs px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">Auto</span>' : ''}
+                    </div>
+                    <h3 class="font-semibold text-slate-900 dark:text-white line-clamp-2">${goal.title}</h3>
+                  </div>
+                </div>
+                <div class="flex flex-col items-end gap-1">
+                  ${isCompleted ? '<span class="badge-success text-xs">✓ Completada</span>' : 
+                    isOverdue ? '<span class="badge-danger text-xs">⚠ Vencida</span>' : 
+                    `<span class="badge-info text-xs">${daysLeft}d restantes</span>`}
+                  <span class="text-xs px-2 py-0.5 rounded-full ${priority.class}">${priority.label}</span>
+                </div>
+              </div>
+              
+              ${goal.description ? `<p class="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-2">${goal.description}</p>` : ''}
+              
+              <!-- Circular Progress -->
+              <div class="flex items-center gap-4 mb-4">
+                <div class="relative w-16 h-16 flex-shrink-0">
+                  <svg class="w-16 h-16 progress-ring" viewBox="0 0 36 36">
+                    <path class="stroke-slate-200 dark:stroke-slate-700" stroke-width="3" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                    <path class="stroke-current ${isCompleted ? 'text-emerald-500' : isOverdue ? 'text-rose-500' : 'text-indigo-500'}" stroke-width="3" stroke-linecap="round" fill="none" stroke-dasharray="${Math.min(progress, 100)}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                  </svg>
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-sm font-bold text-slate-900 dark:text-white">${progress.toFixed(0)}%</span>
+                  </div>
+                </div>
+                <div class="flex-1 space-y-2">
+                  <div class="flex justify-between text-sm">
+                    <span class="text-slate-500 dark:text-slate-400">Actual</span>
+                    <span class="font-semibold text-slate-900 dark:text-white">${formatValue(goal.current_value, goal.unit)}</span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span class="text-slate-500 dark:text-slate-400">Objetivo</span>
+                    <span class="font-semibold text-slate-900 dark:text-white">${formatValue(goal.target_value, goal.unit)}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="flex justify-between items-center pt-3 border-t border-slate-100 dark:border-slate-700">
+                <span class="text-xs text-slate-500 dark:text-slate-400">
+                  ${format(new Date(goal.start_date), 'dd MMM', { locale: es })} - ${format(new Date(goal.end_date), 'dd MMM', { locale: es })}
+                </span>
+                ${canManage ? `
+                  <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onclick="editGoal('${goal.id}')" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 text-sm font-medium">Editar</button>
+                    <button onclick="confirmDelete('${goal.id}')" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium">Eliminar</button>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateStats(goals: any[]) {
+      const active = goals.filter(g => g.status === 'active').length;
+      const completed = goals.filter(g => g.status === 'completed' || g.progress_status === 'completed').length;
+      const failed = goals.filter(g => g.status === 'failed' || g.progress_status === 'failed').length;
+      const avgProgress = goals.length > 0 
+        ? goals.reduce((sum, g) => sum + (g.progress_percentage || 0), 0) / goals.length 
+        : 0;
+
+      document.getElementById('activeCount')!.textContent = active.toString();
+      document.getElementById('completedCount')!.textContent = completed.toString();
+      document.getElementById('failedCount')!.textContent = failed.toString();
+      document.getElementById('avgProgress')!.textContent = `${avgProgress.toFixed(0)}%`;
+    }
+
+    // Modal handlers
+    const modal = document.getElementById('goalModal')!;
+    const deleteModal = document.getElementById('deleteModal')!;
+    const form = document.getElementById('goalForm') as HTMLFormElement;
+
+    document.getElementById('addGoalBtn')?.addEventListener('click', () => {
+      if (!canManage) return;
+      document.getElementById('modalTitle')!.textContent = 'Nueva Meta';
+      form.reset();
+      (document.getElementById('goalId') as HTMLInputElement).value = '';
+      const today = new Date();
+      (document.getElementById('startDate') as HTMLInputElement).value = today.toISOString().split('T')[0];
+      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      (document.getElementById('endDate') as HTMLInputElement).value = endOfMonth.toISOString().split('T')[0];
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    });
+
+    document.getElementById('cancelBtn')?.addEventListener('click', closeModal);
+    document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
+
+    function closeModal() {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!canManage) return;
+      
+      const goalId = (document.getElementById('goalId') as HTMLInputElement).value;
+      const goalData = {
+        title: (document.getElementById('title') as HTMLInputElement).value,
+        description: (document.getElementById('description') as HTMLTextAreaElement).value || undefined,
+        type: (document.getElementById('goalType') as HTMLSelectElement).value,
+        unit: (document.getElementById('unit') as HTMLSelectElement).value,
+        target_value: parseFloat((document.getElementById('targetValue') as HTMLInputElement).value),
+        current_value: parseFloat((document.getElementById('currentValue') as HTMLInputElement).value) || 0,
+        start_date: (document.getElementById('startDate') as HTMLInputElement).value,
+        end_date: (document.getElementById('endDate') as HTMLInputElement).value,
+        status: 'active',
+        auto_calculate: (document.getElementById('autoCalculate') as HTMLInputElement).checked,
+        priority: (document.getElementById('priority') as HTMLSelectElement).value,
+        color: (document.getElementById('goalColor') as HTMLInputElement).value,
+        notify_percentage: parseInt((document.getElementById('notifyPercentage') as HTMLInputElement).value),
+        created_by: currentUser.id
+      };
+
+      try {
+        if (goalId) {
+          await updateGoal(goalId, goalData as any);
+        } else {
+          await addGoal(goalData as any);
+        }
+        
+        closeModal();
+        await loadGoals();
+      } catch (error) {
+        console.error('Error saving goal:', error);
+        alert('Error al guardar la meta');
+      }
+    });
+
+    // Edit and Delete handlers
+    (window as any).editGoal = (id: string) => {
+      if (!canManage) return;
+      const goal = allGoals.find(g => g.id === id);
+      if (!goal) return;
+
+      document.getElementById('modalTitle')!.textContent = 'Editar Meta';
+      (document.getElementById('goalId') as HTMLInputElement).value = goal.id;
+      (document.getElementById('title') as HTMLInputElement).value = goal.title;
+      (document.getElementById('description') as HTMLTextAreaElement).value = goal.description || '';
+      (document.getElementById('goalType') as HTMLSelectElement).value = goal.type;
+      (document.getElementById('unit') as HTMLSelectElement).value = goal.unit;
+      (document.getElementById('targetValue') as HTMLInputElement).value = goal.target_value;
+      (document.getElementById('currentValue') as HTMLInputElement).value = goal.current_value;
+      (document.getElementById('startDate') as HTMLInputElement).value = goal.start_date;
+      (document.getElementById('endDate') as HTMLInputElement).value = goal.end_date;
+      (document.getElementById('autoCalculate') as HTMLInputElement).checked = goal.auto_calculate || false;
+      (document.getElementById('priority') as HTMLSelectElement).value = goal.priority || 'medium';
+      (document.getElementById('goalColor') as HTMLInputElement).value = goal.color || '#6366f1';
+      (document.getElementById('goalColorText') as HTMLInputElement).value = goal.color || '#6366f1';
+      (document.getElementById('notifyPercentage') as HTMLInputElement).value = goal.notify_percentage || 80;
+      document.getElementById('notifyValue')!.textContent = `${goal.notify_percentage || 80}%`;
+
+      // Update current value input state
+      const currentValueInput = document.getElementById('currentValue') as HTMLInputElement;
+      currentValueInput.disabled = goal.auto_calculate || false;
+      currentValueInput.classList.toggle('opacity-50', goal.auto_calculate || false);
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    };
+
+    (window as any).confirmDelete = (id: string) => {
+      if (!canManage) return;
+      (document.getElementById('deleteGoalId') as HTMLInputElement).value = id;
+      deleteModal.classList.remove('hidden');
+      deleteModal.classList.add('flex');
+    };
+
+    document.getElementById('cancelDeleteBtn')?.addEventListener('click', () => {
+      deleteModal.classList.add('hidden');
+      deleteModal.classList.remove('flex');
+    });
+
+    document.getElementById('confirmDeleteBtn')?.addEventListener('click', async () => {
+      if (!canManage) return;
+      const id = (document.getElementById('deleteGoalId') as HTMLInputElement).value;
+      try {
+        await deleteGoal(id);
+        deleteModal.classList.add('hidden');
+        deleteModal.classList.remove('flex');
+        await loadGoals();
+      } catch (error) {
+        console.error('Error deleting goal:', error);
+        alert('Error al eliminar la meta');
+      }
+    });
+
+    init();
+  </script>
+</DashboardLayout>

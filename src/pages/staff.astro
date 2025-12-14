@@ -1,0 +1,377 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Personal" activeSection="staff">
+  <div class="px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 flex items-center justify-center shadow-lg shadow-slate-500/30">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Personal</h1>
+          <p class="text-slate-500 dark:text-slate-400 text-sm">Gestión del equipo de SoftControl</p>
+        </div>
+      </div>
+      <button id="addStaffBtn" class="btn-primary inline-flex items-center gap-2 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Añadir Personal
+      </button>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+      <div class="relative overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg shadow-indigo-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Total Personal</span>
+          </div>
+          <p id="totalStaff" class="text-3xl font-bold">0</p>
+        </div>
+      </div>
+      <div class="relative overflow-hidden bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg shadow-violet-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Administradores</span>
+          </div>
+          <p id="adminCount" class="text-3xl font-bold">0</p>
+        </div>
+      </div>
+      <div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl p-5 text-white shadow-lg shadow-emerald-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Activos</span>
+          </div>
+          <p id="activeStaff" class="text-3xl font-bold">0</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Staff Grid -->
+    <div id="staffGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="col-span-full text-center py-8 text-slate-500 dark:text-slate-400">
+        Cargando personal...
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Staff Modal -->
+  <div id="staffModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4">
+      <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" id="modalOverlay"></div>
+      <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-md w-full p-6">
+        <h3 id="modalTitle" class="text-xl font-bold text-slate-900 dark:text-white mb-6">Añadir Personal</h3>
+        <form id="staffForm" class="space-y-4">
+          <input type="hidden" id="staffId" />
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nombre completo *</label>
+            <input type="text" id="staffName" class="input-field w-full" required placeholder="Juan Pérez" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email *</label>
+            <input type="email" id="staffEmail" class="input-field w-full" required placeholder="juan@softcontrol.com" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Teléfono</label>
+            <input type="tel" id="staffPhone" class="input-field w-full" placeholder="+34 600 000 000" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Rol *</label>
+            <select id="staffRole" class="input-field w-full" required>
+              <option value="staff">Personal</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+          <div id="passwordField">
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Contraseña *</label>
+            <input type="password" id="staffPassword" class="input-field w-full" placeholder="Mínimo 6 caracteres" />
+          </div>
+          <div id="formError" class="hidden bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400 px-4 py-3 rounded-lg text-sm"></div>
+          <div class="flex gap-3 pt-4">
+            <button type="button" id="cancelBtn" class="btn-secondary flex-1">Cancelar</button>
+            <button type="submit" class="btn-primary flex-1">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { getProfiles, updateProfile, supabase, getCreatableRoles, canEditRole, canDeleteRole, getRoleLabel } from '../lib/supabase';
+    import type { Profile, UserRole } from '../lib/supabase';
+    import { checkAuth, isStaffUser, isAdmin, isSuperAdmin } from '../lib/auth';
+
+    let allStaff: Profile[] = [];
+    let currentUser: any = null;
+    let creatableRoles: UserRole[] = [];
+
+    async function init() {
+      currentUser = await checkAuth();
+      if (!currentUser || !isStaffUser(currentUser)) {
+        window.location.href = '/login';
+        return;
+      }
+
+      // Only admins can access this page
+      if (!isAdmin(currentUser)) {
+        window.location.href = '/dashboard';
+        return;
+      }
+
+      // Get roles this user can create
+      const myRole = currentUser.profile?.role as UserRole;
+      creatableRoles = getCreatableRoles(myRole);
+      
+      // Update role select options
+      updateRoleSelect();
+
+      await loadStaff();
+    }
+    
+    function updateRoleSelect() {
+      const roleSelect = document.getElementById('staffRole') as HTMLSelectElement;
+      if (roleSelect && creatableRoles.length > 0) {
+        roleSelect.innerHTML = creatableRoles
+          .map(r => `<option value="${r}">${getRoleLabel(r)}</option>`)
+          .join('');
+      }
+    }
+
+    async function loadStaff() {
+      allStaff = await getProfiles();
+      renderStaff(allStaff);
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = allStaff.length;
+      const admins = allStaff.filter(s => s.role === 'admin').length;
+      const active = allStaff.filter(s => s.is_active).length;
+
+      document.getElementById('totalStaff')!.textContent = total.toString();
+      document.getElementById('adminCount')!.textContent = admins.toString();
+      document.getElementById('activeStaff')!.textContent = active.toString();
+    }
+
+    function renderStaff(staff: Profile[]) {
+      const grid = document.getElementById('staffGrid')!;
+      const myRole = currentUser?.profile?.role as UserRole;
+      
+      if (staff.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-8 text-slate-500 dark:text-slate-400">
+            No hay personal registrado
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = staff.map(person => {
+        const canEdit = canEditRole(myRole, person.role as UserRole);
+        const canDelete = canDeleteRole(myRole, person.role as UserRole);
+        const isMe = person.id === currentUser?.id;
+        
+        return `
+        <div class="card p-6">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center">
+              <div class="h-12 w-12 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center">
+                <span class="text-white font-bold text-lg">${person.full_name.charAt(0).toUpperCase()}</span>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">${person.full_name}</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">${person.email || ''}</p>
+              </div>
+            </div>
+            <span class="${person.is_active ? 'badge-success' : 'badge-warning'}">
+              ${person.is_active ? 'Activo' : 'Inactivo'}
+            </span>
+          </div>
+          <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-slate-600 dark:text-slate-400">
+                <span class="font-medium">${getRoleLabel(person.role as UserRole)}</span>
+              </span>
+              ${person.phone ? `<span class="text-sm text-slate-500 dark:text-slate-400">${person.phone}</span>` : ''}
+            </div>
+          </div>
+          ${(canEdit || !isMe) ? `
+          <div class="mt-4 flex gap-2">
+            ${canEdit ? `<button onclick="editStaff('${person.id}')" class="btn-secondary text-sm flex-1">Editar</button>` : ''}
+            ${canDelete && !isMe ? `
+              <button onclick="toggleActive('${person.id}', ${!person.is_active})" class="btn-secondary text-sm">
+                ${person.is_active ? 'Desactivar' : 'Activar'}
+              </button>
+            ` : ''}
+          </div>
+          ` : ''}
+        </div>
+      `}).join('');
+    }
+
+    // Modal handling
+    const modal = document.getElementById('staffModal')!;
+    const modalOverlay = document.getElementById('modalOverlay')!;
+    const addBtn = document.getElementById('addStaffBtn')!;
+    const cancelBtn = document.getElementById('cancelBtn')!;
+    const form = document.getElementById('staffForm') as HTMLFormElement;
+    const modalTitle = document.getElementById('modalTitle')!;
+    const passwordField = document.getElementById('passwordField')!;
+
+    function openModal(isEdit = false) {
+      modal.classList.remove('hidden');
+      modalTitle.textContent = isEdit ? 'Editar Personal' : 'Añadir Personal';
+      passwordField.style.display = isEdit ? 'none' : 'block';
+      if (!isEdit) {
+        form.reset();
+        (document.getElementById('staffId') as HTMLInputElement).value = '';
+      }
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+      form.reset();
+      document.getElementById('formError')!.classList.add('hidden');
+    }
+
+    addBtn?.addEventListener('click', () => openModal(false));
+    cancelBtn?.addEventListener('click', closeModal);
+    modalOverlay?.addEventListener('click', closeModal);
+
+    // Edit staff
+    (window as any).editStaff = function(id: string) {
+      const person = allStaff.find(s => s.id === id);
+      if (!person) return;
+      
+      // Check permission
+      const myRole = currentUser?.profile?.role as UserRole;
+      if (!canEditRole(myRole, person.role as UserRole)) {
+        alert('No tienes permisos para editar este usuario');
+        return;
+      }
+
+      (document.getElementById('staffId') as HTMLInputElement).value = person.id;
+      (document.getElementById('staffName') as HTMLInputElement).value = person.full_name;
+      (document.getElementById('staffEmail') as HTMLInputElement).value = person.email || '';
+      (document.getElementById('staffPhone') as HTMLInputElement).value = person.phone || '';
+      (document.getElementById('staffRole') as HTMLSelectElement).value = person.role;
+      
+      openModal(true);
+    };
+
+    // Toggle active status
+    (window as any).toggleActive = async function(id: string, active: boolean) {
+      const person = allStaff.find(s => s.id === id);
+      if (!person) return;
+      
+      // Check permission
+      const myRole = currentUser?.profile?.role as UserRole;
+      if (!canDeleteRole(myRole, person.role as UserRole)) {
+        alert('No tienes permisos para modificar este usuario');
+        return;
+      }
+      
+      const { error } = await updateProfile(id, { is_active: active });
+      if (error) {
+        alert('Error al actualizar el estado');
+        return;
+      }
+      await loadStaff();
+    };
+
+    // Form submit
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorEl = document.getElementById('formError')!;
+      errorEl.classList.add('hidden');
+
+      const id = (document.getElementById('staffId') as HTMLInputElement).value;
+      const fullName = (document.getElementById('staffName') as HTMLInputElement).value;
+      const email = (document.getElementById('staffEmail') as HTMLInputElement).value;
+      const phone = (document.getElementById('staffPhone') as HTMLInputElement).value;
+      const role = (document.getElementById('staffRole') as HTMLSelectElement).value as UserRole;
+      const password = (document.getElementById('staffPassword') as HTMLInputElement).value;
+
+      // Validate role permission
+      if (!creatableRoles.includes(role)) {
+        errorEl.textContent = 'No tienes permisos para asignar este rol';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      if (id) {
+        // Update existing - check permission
+        const person = allStaff.find(s => s.id === id);
+        const myRole = currentUser?.profile?.role as UserRole;
+        if (person && !canEditRole(myRole, person.role as UserRole)) {
+          errorEl.textContent = 'No tienes permisos para editar este usuario';
+          errorEl.classList.remove('hidden');
+          return;
+        }
+        
+        const { error } = await updateProfile(id, { full_name: fullName, email, phone, role });
+        if (error) {
+          errorEl.textContent = 'Error al actualizar';
+          errorEl.classList.remove('hidden');
+          return;
+        }
+      } else {
+        // Create new - use API endpoint with admin privileges
+        if (!password || password.length < 6) {
+          errorEl.textContent = 'La contraseña debe tener al menos 6 caracteres';
+          errorEl.classList.remove('hidden');
+          return;
+        }
+
+        // Call API endpoint to create user with admin privileges
+        const response = await fetch('/api/create-staff', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            password,
+            fullName,
+            phone,
+            role
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || result.error) {
+          errorEl.textContent = result.error || 'Error al crear usuario';
+          errorEl.classList.remove('hidden');
+          return;
+        }
+
+        if (result.warning) {
+          console.warn('Warning:', result.warning);
+        }
+      }
+
+      closeModal();
+      await loadStaff();
+    });
+
+    // Initialize
+    init();
+  </script>
+</DashboardLayout>

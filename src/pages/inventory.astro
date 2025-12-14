@@ -1,0 +1,366 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Inventario" activeSection="inventory">
+  <div class="px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-3xl font-bold" style="background: linear-gradient(to right, #3b82f6, #1d4ed8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Inventario</h1>
+        <p class="mt-2 text-slate-600">Control de stock y productos disponibles</p>
+      </div>
+      <button id="addInventoryBtn" class="mt-4 sm:mt-0 btn-primary inline-flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Añadir al Inventario
+      </button>
+    </div>
+
+    <!-- Search & Filters -->
+    <div class="card mb-6">
+      <div class="p-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Buscar producto</label>
+            <input type="text" id="searchInput" placeholder="Nombre o SKU..." class="input-field w-full">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Filtrar</label>
+            <select id="stockFilter" class="input-field w-full">
+              <option value="">Todos</option>
+              <option value="low">Stock Bajo</option>
+              <option value="ok">Stock OK</option>
+            </select>
+          </div>
+          <div class="flex items-end">
+            <button id="searchBtn" class="btn-primary w-full">Buscar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+        <p class="text-sm text-slate-600">Total Productos</p>
+        <p class="text-2xl font-bold text-slate-900" id="totalProducts">0</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+        <p class="text-sm text-slate-600">Valor Total</p>
+        <p class="text-2xl font-bold text-indigo-600" id="totalValue">0 €</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+        <p class="text-sm text-slate-600">Unidades Totales</p>
+        <p class="text-2xl font-bold text-slate-900" id="totalUnits">0</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+        <p class="text-sm text-slate-600">Alertas Stock Bajo</p>
+        <p class="text-2xl font-bold text-red-600" id="lowStockAlerts">0</p>
+      </div>
+    </div>
+
+    <!-- Inventory Grid -->
+    <div id="inventoryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <p class="text-slate-500 col-span-full text-center py-12">Cargando inventario...</p>
+    </div>
+  </div>
+
+  <!-- Add/Edit Inventory Modal -->
+  <div id="inventoryModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4">
+      <div class="p-6 border-b border-slate-200">
+        <h2 id="modalTitle" class="text-xl font-bold text-slate-900">Añadir al Inventario</h2>
+      </div>
+      <form id="inventoryForm" class="p-6 space-y-4">
+        <input type="hidden" id="inventoryId">
+        
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Producto *</label>
+          <select id="productId" class="input-field w-full" required>
+            <option value="">Seleccionar producto...</option>
+          </select>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Cantidad *</label>
+            <input type="number" id="quantity" min="0" class="input-field w-full" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Stock Mínimo</label>
+            <input type="number" id="minStock" min="0" value="10" class="input-field w-full">
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Ubicación</label>
+          <input type="text" id="location" placeholder="Ej: Almacén A, Estante 3" class="input-field w-full">
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" id="cancelBtn" class="btn-secondary">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Adjust Stock Modal -->
+  <div id="adjustModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6">
+      <h2 class="text-xl font-bold text-slate-900 mb-4">Ajustar Stock</h2>
+      <p class="text-slate-600 mb-2" id="adjustProductName"></p>
+      <p class="text-sm text-slate-500 mb-4">Stock actual: <span id="currentStock" class="font-bold"></span></p>
+      <input type="hidden" id="adjustInventoryId">
+      
+      <div class="flex items-center space-x-4 mb-6">
+        <button type="button" id="decreaseBtn" class="w-12 h-12 rounded-xl bg-red-100 text-red-600 font-bold text-xl hover:bg-red-200">-</button>
+        <input type="number" id="adjustAmount" value="0" class="input-field w-24 text-center text-xl font-bold">
+        <button type="button" id="increaseBtn" class="w-12 h-12 rounded-xl bg-green-100 text-green-600 font-bold text-xl hover:bg-green-200">+</button>
+      </div>
+      
+      <div class="flex justify-end space-x-3">
+        <button id="cancelAdjustBtn" class="btn-secondary">Cancelar</button>
+        <button id="confirmAdjustBtn" class="btn-primary">Aplicar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { getInventory, addInventory, updateInventory, adjustStock, getProducts } from '../lib/supabase';
+    import { checkAuth } from '../lib/auth';
+
+    let currentUser: any = null;
+    let allInventory: any[] = [];
+    let products: any[] = [];
+
+    function formatCurrency(amount: number): string {
+      return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(amount);
+    }
+
+    async function init() {
+      currentUser = await checkAuth();
+      if (!currentUser) return;
+
+      await Promise.all([loadInventory(), loadProducts()]);
+    }
+
+    async function loadInventory() {
+      allInventory = await getInventory();
+      renderInventory(allInventory);
+      updateStats(allInventory);
+    }
+
+    async function loadProducts() {
+      products = await getProducts();
+      const select = document.getElementById('productId') as HTMLSelectElement;
+      select.innerHTML = '<option value="">Seleccionar producto...</option>' + 
+        products.map(p => `<option value="${p.id}">${p.name} (${p.sku || 'Sin SKU'})</option>`).join('');
+    }
+
+    function renderInventory(items: any[]) {
+      const container = document.getElementById('inventoryGrid')!;
+      
+      if (items.length === 0) {
+        container.innerHTML = '<p class="text-slate-500 col-span-full text-center py-12">No hay productos en el inventario</p>';
+        return;
+      }
+
+      container.innerHTML = items.map(item => {
+        const isLowStock = item.low_stock_alert;
+        const stockClass = isLowStock ? 'border-red-200 bg-red-50' : 'border-slate-100';
+        const stockBadge = isLowStock ? 
+          '<span class="badge-danger text-xs">Stock Bajo</span>' : 
+          '<span class="badge-success text-xs">OK</span>';
+
+        return `
+          <div class="bg-white rounded-xl p-5 shadow-sm border ${stockClass}">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <h3 class="font-semibold text-slate-900">${item.product_name}</h3>
+                <p class="text-xs text-slate-500">${item.sku || 'Sin SKU'}</p>
+              </div>
+              ${stockBadge}
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              <div class="bg-slate-50 rounded-lg p-2 text-center">
+                <p class="text-2xl font-bold ${isLowStock ? 'text-red-600' : 'text-slate-900'}">${item.quantity}</p>
+                <p class="text-xs text-slate-500">Unidades</p>
+              </div>
+              <div class="bg-slate-50 rounded-lg p-2 text-center">
+                <p class="text-lg font-bold text-slate-900">${formatCurrency(item.inventory_value)}</p>
+                <p class="text-xs text-slate-500">Valor</p>
+              </div>
+            </div>
+            
+            <div class="text-xs text-slate-500 mb-3">
+              <p>Stock mínimo: ${item.min_stock}</p>
+              ${item.location ? `<p>Ubicación: ${item.location}</p>` : ''}
+            </div>
+            
+            <div class="flex space-x-2">
+              <button onclick="openAdjust('${item.id}', '${item.product_name}', ${item.quantity})" class="flex-1 btn-secondary text-sm py-2">
+                Ajustar Stock
+              </button>
+              <button onclick="editInventory('${item.id}')" class="btn-secondary text-sm py-2 px-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateStats(items: any[]) {
+      const totalProducts = items.length;
+      const totalValue = items.reduce((sum, i) => sum + (i.inventory_value || 0), 0);
+      const totalUnits = items.reduce((sum, i) => sum + i.quantity, 0);
+      const lowStock = items.filter(i => i.low_stock_alert).length;
+
+      document.getElementById('totalProducts')!.textContent = totalProducts.toString();
+      document.getElementById('totalValue')!.textContent = formatCurrency(totalValue);
+      document.getElementById('totalUnits')!.textContent = totalUnits.toString();
+      document.getElementById('lowStockAlerts')!.textContent = lowStock.toString();
+    }
+
+    // Modal handlers
+    const modal = document.getElementById('inventoryModal')!;
+    const adjustModal = document.getElementById('adjustModal')!;
+    const form = document.getElementById('inventoryForm') as HTMLFormElement;
+
+    document.getElementById('addInventoryBtn')?.addEventListener('click', () => {
+      document.getElementById('modalTitle')!.textContent = 'Añadir al Inventario';
+      form.reset();
+      (document.getElementById('inventoryId') as HTMLInputElement).value = '';
+      (document.getElementById('minStock') as HTMLInputElement).value = '10';
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    });
+
+    document.getElementById('cancelBtn')?.addEventListener('click', () => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    });
+
+    // Form submit
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const inventoryId = (document.getElementById('inventoryId') as HTMLInputElement).value;
+      const inventoryData = {
+        company_id: currentUser.profile?.company_id,
+        product_id: (document.getElementById('productId') as HTMLSelectElement).value,
+        quantity: parseInt((document.getElementById('quantity') as HTMLInputElement).value),
+        min_stock: parseInt((document.getElementById('minStock') as HTMLInputElement).value) || 10,
+        location: (document.getElementById('location') as HTMLInputElement).value || null
+      };
+
+      try {
+        if (inventoryId) {
+          await updateInventory(inventoryId, inventoryData);
+        } else {
+          await addInventory(inventoryData as any);
+        }
+        
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        await loadInventory();
+      } catch (error) {
+        console.error('Error saving inventory:', error);
+        alert('Error al guardar');
+      }
+    });
+
+    // Search
+    document.getElementById('searchBtn')?.addEventListener('click', () => {
+      const searchTerm = (document.getElementById('searchInput') as HTMLInputElement).value.toLowerCase();
+      const filter = (document.getElementById('stockFilter') as HTMLSelectElement).value;
+
+      let filtered = allInventory;
+      
+      if (searchTerm) {
+        filtered = filtered.filter(i => 
+          i.product_name.toLowerCase().includes(searchTerm) ||
+          (i.sku && i.sku.toLowerCase().includes(searchTerm))
+        );
+      }
+      
+      if (filter === 'low') {
+        filtered = filtered.filter(i => i.low_stock_alert);
+      } else if (filter === 'ok') {
+        filtered = filtered.filter(i => !i.low_stock_alert);
+      }
+
+      renderInventory(filtered);
+    });
+
+    // Edit handler
+    (window as any).editInventory = (id: string) => {
+      const item = allInventory.find(i => i.id === id);
+      if (!item) return;
+
+      document.getElementById('modalTitle')!.textContent = 'Editar Inventario';
+      (document.getElementById('inventoryId') as HTMLInputElement).value = item.id;
+      (document.getElementById('productId') as HTMLSelectElement).value = item.product_id;
+      (document.getElementById('quantity') as HTMLInputElement).value = item.quantity;
+      (document.getElementById('minStock') as HTMLInputElement).value = item.min_stock;
+      (document.getElementById('location') as HTMLInputElement).value = item.location || '';
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    };
+
+    // Adjust stock handlers
+    (window as any).openAdjust = (id: string, name: string, qty: number) => {
+      (document.getElementById('adjustInventoryId') as HTMLInputElement).value = id;
+      document.getElementById('adjustProductName')!.textContent = name;
+      document.getElementById('currentStock')!.textContent = qty.toString();
+      (document.getElementById('adjustAmount') as HTMLInputElement).value = '0';
+      adjustModal.classList.remove('hidden');
+      adjustModal.classList.add('flex');
+    };
+
+    document.getElementById('cancelAdjustBtn')?.addEventListener('click', () => {
+      adjustModal.classList.add('hidden');
+      adjustModal.classList.remove('flex');
+    });
+
+    document.getElementById('decreaseBtn')?.addEventListener('click', () => {
+      const input = document.getElementById('adjustAmount') as HTMLInputElement;
+      input.value = (parseInt(input.value) - 1).toString();
+    });
+
+    document.getElementById('increaseBtn')?.addEventListener('click', () => {
+      const input = document.getElementById('adjustAmount') as HTMLInputElement;
+      input.value = (parseInt(input.value) + 1).toString();
+    });
+
+    document.getElementById('confirmAdjustBtn')?.addEventListener('click', async () => {
+      const id = (document.getElementById('adjustInventoryId') as HTMLInputElement).value;
+      const adjustment = parseInt((document.getElementById('adjustAmount') as HTMLInputElement).value);
+      
+      if (adjustment === 0) {
+        adjustModal.classList.add('hidden');
+        adjustModal.classList.remove('flex');
+        return;
+      }
+
+      try {
+        await adjustStock(id, adjustment);
+        adjustModal.classList.add('hidden');
+        adjustModal.classList.remove('flex');
+        await loadInventory();
+      } catch (error) {
+        console.error('Error adjusting stock:', error);
+        alert('Error al ajustar stock');
+      }
+    });
+
+    init();
+  </script>
+</DashboardLayout>

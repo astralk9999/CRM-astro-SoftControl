@@ -1,0 +1,481 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+
+export const prerender = false;
+
+const { id } = Astro.params;
+---
+
+<DashboardLayout title="Detalle de Cliente" activeSection="customers">
+  <div class="px-4 sm:px-6 lg:px-8 py-6" data-customer-id={id}>
+    <!-- Header con navegación -->
+    <div class="mb-6">
+      <a href="/customers" class="inline-flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors group">
+        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Volver a clientes
+      </a>
+    </div>
+
+    <!-- Loading state -->
+    <div id="loadingState" class="flex items-center justify-center py-16">
+      <div class="flex flex-col items-center gap-3">
+        <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
+          <svg class="w-6 h-6 text-indigo-500 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+        <span class="text-slate-500 dark:text-slate-400">Cargando cliente...</span>
+      </div>
+    </div>
+
+    <!-- Error state -->
+    <div id="errorState" class="hidden text-center py-16">
+      <div class="w-20 h-20 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mx-auto mb-4">
+        <svg class="w-10 h-10 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">Cliente no encontrado</h3>
+      <p class="text-slate-500 dark:text-slate-400 mb-4">El cliente que buscas no existe o ha sido eliminado.</p>
+      <a href="/customers" class="btn-primary">Volver a clientes</a>
+    </div>
+
+    <!-- Content -->
+    <div id="customerContent" class="hidden space-y-6">
+      <!-- Customer Header Card -->
+      <div class="bg-white dark:bg-slate-800/50 rounded-2xl border border-slate-200/80 dark:border-slate-700/50 p-6">
+        <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+          <div class="flex items-start gap-4">
+            <div id="customerAvatar" class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-indigo-500/25">
+              <span class="text-2xl font-bold text-white">?</span>
+            </div>
+            <div>
+              <h1 id="customerName" class="text-2xl font-bold text-slate-900 dark:text-white">-</h1>
+              <p id="customerEmail" class="text-slate-500 dark:text-slate-400">-</p>
+              <div class="flex items-center gap-3 mt-2">
+                <span id="customerStatus" class="badge-success">Activo</span>
+                <span id="customerCompany" class="text-sm text-slate-600 dark:text-slate-300">-</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button id="editCustomerBtn" class="btn-secondary inline-flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+              </svg>
+              Editar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl p-5 text-white shadow-lg shadow-emerald-500/20">
+          <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+          <div class="relative">
+            <div class="flex items-center gap-2 mb-2">
+              <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span class="text-sm font-medium text-white/80">Total gastado</span>
+            </div>
+            <p id="totalSpent" class="text-2xl font-bold">0 €</p>
+          </div>
+        </div>
+        <div class="relative overflow-hidden bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg shadow-violet-500/20">
+          <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+          <div class="relative">
+            <div class="flex items-center gap-2 mb-2">
+              <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+              </svg>
+              <span class="text-sm font-medium text-white/80">Suscripciones</span>
+            </div>
+            <p id="subscriptionCount" class="text-2xl font-bold">0</p>
+          </div>
+        </div>
+        <div class="relative overflow-hidden bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg shadow-cyan-500/20">
+          <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+          <div class="relative">
+            <div class="flex items-center gap-2 mb-2">
+              <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+              </svg>
+              <span class="text-sm font-medium text-white/80">Licencias</span>
+            </div>
+            <div>
+              <p id="licenseCount" class="text-xl font-bold text-slate-900 dark:text-white">0</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Licencias</p>
+            </div>
+          </div>
+        </div>
+        <div class="card p-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <div>
+              <p id="customerSince" class="text-xl font-bold text-slate-900 dark:text-white">-</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Cliente desde</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Details Grid -->
+      <div class="grid lg:grid-cols-2 gap-6">
+        <!-- Info Card -->
+        <div class="card">
+          <div class="p-4 border-b border-slate-200 dark:border-slate-700">
+            <h3 class="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+              <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+              Información de Contacto
+            </h3>
+          </div>
+          <div class="p-4 space-y-4">
+            <div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-700">
+              <span class="text-sm text-slate-500 dark:text-slate-400">Teléfono</span>
+              <span id="customerPhone" class="text-sm font-medium text-slate-900 dark:text-white">-</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-700">
+              <span class="text-sm text-slate-500 dark:text-slate-400">Dirección</span>
+              <span id="customerAddress" class="text-sm font-medium text-slate-900 dark:text-white text-right max-w-xs">-</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-700">
+              <span class="text-sm text-slate-500 dark:text-slate-400">Ciudad</span>
+              <span id="customerCity" class="text-sm font-medium text-slate-900 dark:text-white">-</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-700">
+              <span class="text-sm text-slate-500 dark:text-slate-400">País</span>
+              <span id="customerCountry" class="text-sm font-medium text-slate-900 dark:text-white">-</span>
+            </div>
+            <div class="flex justify-between items-center py-2">
+              <span class="text-sm text-slate-500 dark:text-slate-400">NIF/CIF</span>
+              <span id="customerTaxId" class="text-sm font-medium text-slate-900 dark:text-white">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes Card -->
+        <div class="card">
+          <div class="p-4 border-b border-slate-200 dark:border-slate-700">
+            <h3 class="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+              <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              Notas
+            </h3>
+          </div>
+          <div class="p-4">
+            <p id="customerNotes" class="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap">Sin notas</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subscriptions Table -->
+      <div class="card">
+        <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+          <h3 class="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            </svg>
+            Suscripciones
+          </h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead class="bg-slate-50 dark:bg-slate-800/50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Producto</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Tipo</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Estado</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Vencimiento</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Importe</th>
+              </tr>
+            </thead>
+            <tbody id="subscriptionsBody" class="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+              <tr>
+                <td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                  Sin suscripciones
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Licenses Table -->
+      <div class="card">
+        <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+          <h3 class="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+            </svg>
+            Licencias
+          </h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead class="bg-slate-50 dark:bg-slate-800/50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Producto</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Clave</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Estado</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Activaciones</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Vencimiento</th>
+              </tr>
+            </thead>
+            <tbody id="licensesBody" class="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+              <tr>
+                <td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                  Sin licencias
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Sales History -->
+      <div class="card">
+        <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+          <h3 class="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            Historial de Ventas
+          </h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead class="bg-slate-50 dark:bg-slate-800/50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Fecha</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Producto</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Importe</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Estado</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Factura</th>
+              </tr>
+            </thead>
+            <tbody id="salesBody" class="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+              <tr>
+                <td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                  Sin ventas registradas
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from '../../lib/supabase';
+    import { format } from 'date-fns';
+    import { es } from 'date-fns/locale';
+
+    const customerId = document.querySelector('[data-customer-id]')?.getAttribute('data-customer-id');
+
+    const statusLabels = {
+      active: 'Activa',
+      trial: 'Prueba',
+      pending: 'Pendiente',
+      expired: 'Expirada',
+      cancelled: 'Cancelada',
+      inactive: 'Inactiva',
+      revoked: 'Revocada'
+    };
+
+    const statusClasses = {
+      active: 'badge-success',
+      trial: 'badge-info',
+      pending: 'badge-warning',
+      expired: 'badge-danger',
+      cancelled: 'badge-danger',
+      inactive: 'badge-warning',
+      revoked: 'badge-danger'
+    };
+
+    const typeLabels = {
+      monthly: 'Mensual',
+      annual: 'Anual',
+      lifetime: 'Definitiva',
+      trial: 'Prueba'
+    };
+
+    const paymentStatusLabels = {
+      paid: 'Pagado',
+      pending: 'Pendiente',
+      failed: 'Fallido',
+      refunded: 'Reembolsado'
+    };
+
+    const paymentStatusClasses = {
+      paid: 'badge-success',
+      pending: 'badge-warning',
+      failed: 'badge-danger',
+      refunded: 'badge-info'
+    };
+
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(amount || 0);
+    }
+
+    async function loadCustomerData() {
+      try {
+        // Fetch customer
+        const { data: customer, error } = await supabase
+          .from('customers')
+          .select('*')
+          .eq('id', customerId)
+          .single();
+
+        if (error || !customer) {
+          document.getElementById('loadingState').classList.add('hidden');
+          document.getElementById('errorState').classList.remove('hidden');
+          return;
+        }
+
+        // Fetch subscriptions
+        const { data: subscriptions } = await supabase
+          .from('subscriptions_full')
+          .select('*')
+          .eq('customer_id', customerId)
+          .order('created_at', { ascending: false });
+
+        // Fetch licenses
+        const { data: licenses } = await supabase
+          .from('licenses_full')
+          .select('*')
+          .eq('customer_id', customerId)
+          .order('created_at', { ascending: false });
+
+        // Fetch sales
+        const { data: sales } = await supabase
+          .from('sales_full')
+          .select('*')
+          .eq('customer_id', customerId)
+          .order('sale_date', { ascending: false });
+
+        // Calculate totals
+        const totalSpent = (sales || [])
+          .filter(s => s.payment_status === 'paid')
+          .reduce((sum, s) => sum + (s.amount || 0), 0);
+
+        // Update UI
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('customerContent').classList.remove('hidden');
+
+        // Header info
+        document.getElementById('customerAvatar').innerHTML = `<span class="text-2xl font-bold text-white">${customer.full_name.charAt(0).toUpperCase()}</span>`;
+        document.getElementById('customerName').textContent = customer.full_name;
+        document.getElementById('customerEmail').textContent = customer.email;
+        document.getElementById('customerCompany').textContent = customer.company_name || '';
+        
+        const statusEl = document.getElementById('customerStatus');
+        if (customer.is_active) {
+          statusEl.className = 'badge-success';
+          statusEl.textContent = 'Activo';
+        } else {
+          statusEl.className = 'badge-danger';
+          statusEl.textContent = 'Inactivo';
+        }
+
+        // Stats
+        document.getElementById('totalSpent').textContent = formatCurrency(totalSpent);
+        document.getElementById('subscriptionCount').textContent = (subscriptions || []).filter(s => s.status === 'active').length.toString();
+        document.getElementById('licenseCount').textContent = (licenses || []).filter(l => l.status === 'active').length.toString();
+        document.getElementById('customerSince').textContent = format(new Date(customer.created_at), 'MMM yyyy', { locale: es });
+
+        // Contact info
+        document.getElementById('customerPhone').textContent = customer.phone || 'No especificado';
+        document.getElementById('customerAddress').textContent = customer.address || 'No especificada';
+        document.getElementById('customerCity').textContent = customer.city || 'No especificada';
+        document.getElementById('customerCountry').textContent = customer.country || 'No especificado';
+        document.getElementById('customerTaxId').textContent = customer.tax_id || 'No especificado';
+        document.getElementById('customerNotes').textContent = customer.notes || 'Sin notas';
+
+        // Render subscriptions
+        renderSubscriptions(subscriptions || []);
+        renderLicenses(licenses || []);
+        renderSales(sales || []);
+
+      } catch (err) {
+        console.error('Error loading customer:', err);
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('errorState').classList.remove('hidden');
+      }
+    }
+
+    function renderSubscriptions(subscriptions) {
+      const tbody = document.getElementById('subscriptionsBody');
+      if (subscriptions.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">Sin suscripciones</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = subscriptions.map(sub => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+          <td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white">${sub.product_name || 'N/A'}</td>
+          <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">${typeLabels[sub.subscription_type] || sub.subscription_type}</td>
+          <td class="px-6 py-4"><span class="${statusClasses[sub.status] || 'badge-info'}">${statusLabels[sub.status] || sub.status}</span></td>
+          <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">${sub.end_date ? format(new Date(sub.end_date), 'dd/MM/yyyy') : 'Sin vencimiento'}</td>
+          <td class="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">${formatCurrency(sub.amount)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderLicenses(licenses) {
+      const tbody = document.getElementById('licensesBody');
+      if (licenses.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">Sin licencias</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = licenses.map(lic => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+          <td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white">${lic.product_name || 'N/A'}</td>
+          <td class="px-6 py-4"><code class="text-xs bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded font-mono">${lic.license_key}</code></td>
+          <td class="px-6 py-4"><span class="${statusClasses[lic.status] || 'badge-info'}">${statusLabels[lic.status] || lic.status}</span></td>
+          <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">${lic.current_activations}/${lic.max_activations}</td>
+          <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">${lic.expiration_date ? format(new Date(lic.expiration_date), 'dd/MM/yyyy') : 'Sin vencimiento'}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderSales(sales) {
+      const tbody = document.getElementById('salesBody');
+      if (sales.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">Sin ventas registradas</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = sales.map(sale => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+          <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">${format(new Date(sale.sale_date), 'dd/MM/yyyy')}</td>
+          <td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white">${sale.product_name || 'N/A'}</td>
+          <td class="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">${formatCurrency(sale.amount)}</td>
+          <td class="px-6 py-4"><span class="${paymentStatusClasses[sale.payment_status] || 'badge-info'}">${paymentStatusLabels[sale.payment_status] || sale.payment_status}</span></td>
+          <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">${sale.invoice_number || '-'}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Edit button
+    document.getElementById('editCustomerBtn')?.addEventListener('click', () => {
+      window.location.href = '/customers?edit=' + customerId;
+    });
+
+    // Load data
+    loadCustomerData();
+  </script>
+</DashboardLayout>

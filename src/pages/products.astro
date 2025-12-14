@@ -1,0 +1,433 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Productos" activeSection="products">
+  <div class="px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 via-rose-500 to-red-600 flex items-center justify-center shadow-lg shadow-pink-500/30">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Productos</h1>
+          <p class="text-slate-500 dark:text-slate-400 text-sm">Planes y licencias de SoftControl</p>
+        </div>
+      </div>
+      <button id="addProductBtn" type="button" class="btn-primary inline-flex items-center gap-2 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Agregar Producto
+      </button>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="relative overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg shadow-indigo-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Total Productos</span>
+          </div>
+          <p id="totalProducts" class="text-3xl font-bold">0</p>
+        </div>
+      </div>
+      <div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl p-5 text-white shadow-lg shadow-emerald-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Activos</span>
+          </div>
+          <p id="activeProducts" class="text-3xl font-bold">0</p>
+        </div>
+      </div>
+      <div class="relative overflow-hidden bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg shadow-violet-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Precio Promedio</span>
+          </div>
+          <p id="avgPrice" class="text-3xl font-bold">0 €</p>
+        </div>
+      </div>
+      <div class="relative overflow-hidden bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl p-5 text-white shadow-lg shadow-amber-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Tipos de Plan</span>
+          </div>
+          <p id="subscriptionTypes" class="text-3xl font-bold">0</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="mb-6">
+      <div class="bg-white dark:bg-slate-800/50 rounded-2xl border border-slate-200/80 dark:border-slate-700/50 p-4">
+        <div class="flex flex-wrap items-center gap-4">
+          <div class="flex-1 min-w-[200px]">
+            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Buscar</label>
+            <div class="relative">
+              <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+              <input type="text" id="searchProducts" placeholder="Buscar productos..." class="input-field w-full pl-10">
+            </div>
+          </div>
+          <div class="w-48">
+            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Tipo</label>
+            <select id="filterType" class="input-field w-full">
+              <option value="">Todos los tipos</option>
+              <option value="monthly">📅 Mensual</option>
+              <option value="annual">🗓️ Anual</option>
+              <option value="lifetime">♾️ Definitiva</option>
+              <option value="trial">🧪 Prueba</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div id="productsGrid" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div class="col-span-full text-center py-8 text-slate-500 dark:text-slate-400">Cargando productos...</div>
+    </div>
+
+    <div id="noProductsMessage" class="hidden text-center py-12">
+      <svg class="mx-auto h-12 w-12 text-slate-400 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+      </svg>
+      <h3 class="mt-2 text-sm font-semibold text-slate-900 dark:text-white">No hay productos</h3>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Comienza agregando un nuevo producto.</p>
+    </div>
+  </div>
+
+  <!-- Add/Edit Product Modal -->
+  <div id="productModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4">
+      <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" id="modalOverlay"></div>
+      <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-md w-full p-6">
+        <h3 id="modalTitle" class="text-xl font-bold text-slate-900 dark:text-white mb-6">Agregar Producto</h3>
+        <form id="productForm" class="space-y-4">
+          <input type="hidden" id="productId" />
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nombre *</label>
+            <input type="text" id="productName" class="input-field w-full" required placeholder="Plan Mensual" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descripción</label>
+            <textarea id="description" rows="2" class="input-field w-full" placeholder="Descripción del producto"></textarea>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo *</label>
+              <select id="subscriptionType" class="input-field w-full" required>
+                <option value="monthly">Mensual</option>
+                <option value="annual">Anual</option>
+                <option value="lifetime">Definitiva</option>
+                <option value="trial">Prueba</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Precio (€) *</label>
+              <input type="number" id="price" class="input-field w-full" step="0.01" min="0" required placeholder="9.99" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">SKU</label>
+            <input type="text" id="sku" class="input-field w-full" placeholder="PLAN-MONTHLY-001" />
+          </div>
+          <div class="flex items-center">
+            <input type="checkbox" id="isActive" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" checked />
+            <label for="isActive" class="ml-2 text-sm text-slate-700 dark:text-slate-300">Producto activo</label>
+          </div>
+          <div id="formError" class="hidden bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400 px-4 py-3 rounded-lg text-sm"></div>
+          <div class="flex gap-3 pt-4">
+            <button type="button" id="cancelModalBtn" class="btn-secondary flex-1">Cancelar</button>
+            <button type="submit" class="btn-primary flex-1">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4">
+      <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" id="deleteOverlay"></div>
+      <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-md w-full p-6">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center mr-4">
+            <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Eliminar Producto</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Esta acción no se puede deshacer</p>
+          </div>
+        </div>
+        <div class="flex gap-3 mt-6">
+          <button type="button" id="cancelDeleteBtn" class="btn-secondary flex-1">Cancelar</button>
+          <button type="button" id="confirmDeleteBtn" class="btn-danger flex-1">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { getProducts, addProduct, updateProduct, deleteProduct, getCurrentUserWithProfile } from '../lib/supabase';
+    import type { Product } from '../lib/supabase';
+
+    let products: Product[] = [];
+    let isUserAdmin = false;
+    let productToDelete: string | null = null;
+
+    const typeLabels: Record<string, string> = {
+      monthly: 'Mensual',
+      annual: 'Anual',
+      lifetime: 'Definitiva',
+      trial: 'Prueba'
+    };
+
+    // Load user info
+    async function loadUserInfo() {
+      const { user, profile } = await getCurrentUserWithProfile();
+      if (user && profile) {
+        isUserAdmin = profile.role === 'admin' || profile.role === 'super_admin';
+        // Staff role gets read-only mode
+        if (profile.role === 'staff') {
+          const addBtn = document.getElementById('addProductBtn');
+          if (addBtn) addBtn.style.display = 'none';
+        }
+      }
+    }
+
+    // Load products
+    async function loadProducts() {
+      products = await getProducts();
+      displayProducts(products);
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = products.length;
+      const active = products.filter(p => p.is_active).length;
+      const avgPrice = total > 0 ? products.reduce((sum, p) => sum + (p.price || 0), 0) / total : 0;
+      const types = new Set(products.map(p => p.subscription_type)).size;
+
+      document.getElementById('totalProducts')!.textContent = total.toString();
+      document.getElementById('activeProducts')!.textContent = active.toString();
+      document.getElementById('avgPrice')!.textContent = avgPrice.toFixed(2) + ' €';
+      document.getElementById('subscriptionTypes')!.textContent = types.toString();
+    }
+
+    function filterProducts() {
+      const searchTerm = (document.getElementById('searchProducts') as HTMLInputElement)?.value.toLowerCase() || '';
+      const typeFilter = (document.getElementById('filterType') as HTMLSelectElement)?.value || '';
+
+      let filtered = products;
+
+      if (searchTerm) {
+        filtered = filtered.filter(p => 
+          p.name.toLowerCase().includes(searchTerm) ||
+          (p.description && p.description.toLowerCase().includes(searchTerm)) ||
+          (p.sku && p.sku.toLowerCase().includes(searchTerm))
+        );
+      }
+
+      if (typeFilter) {
+        filtered = filtered.filter(p => p.subscription_type === typeFilter);
+      }
+
+      displayProducts(filtered);
+    }
+
+    document.getElementById('searchProducts')?.addEventListener('input', filterProducts);
+    document.getElementById('filterType')?.addEventListener('change', filterProducts);
+
+    // Display products in grid
+    function displayProducts(productsToShow: Product[]) {
+      const grid = document.getElementById('productsGrid');
+      const noProductsMsg = document.getElementById('noProductsMessage');
+      
+      if (!grid) return;
+
+      if (productsToShow.length === 0) {
+        grid.innerHTML = '';
+        if (noProductsMsg) noProductsMsg.classList.remove('hidden');
+        return;
+      }
+
+      if (noProductsMsg) noProductsMsg.classList.add('hidden');
+
+      grid.innerHTML = productsToShow.map(product => `
+        <div class="card p-6">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+              </svg>
+            </div>
+            <span class="${product.is_active ? 'badge-success' : 'badge-warning'}">
+              ${product.is_active ? 'Activo' : 'Inactivo'}
+            </span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">${product.name}</h3>
+          <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">${product.description || 'Sin descripción'}</p>
+          ${product.sku ? `<p class="text-xs text-slate-400 dark:text-slate-500 mt-1">SKU: ${product.sku}</p>` : ''}
+          <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm text-slate-600 dark:text-slate-400">Tipo:</span>
+              <span class="text-sm font-medium text-slate-900 dark:text-white">${typeLabels[product.subscription_type] || product.subscription_type}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-slate-600 dark:text-slate-400">Precio:</span>
+              <span class="text-lg font-bold text-indigo-600">${product.price ? product.price.toFixed(2) + ' €' : 'Gratis'}</span>
+            </div>
+          </div>
+          ${isUserAdmin ? `
+            <div class="mt-4 flex gap-2">
+              <button onclick="window.editProduct('${product.id}')" class="btn-secondary text-sm flex-1">Editar</button>
+              <button onclick="window.deleteProductConfirm('${product.id}')" class="btn-danger text-sm">Eliminar</button>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    // Modal elements
+    const modal = document.getElementById('productModal');
+    const deleteModal = document.getElementById('deleteModal');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const deleteOverlay = document.getElementById('deleteOverlay');
+    const addProductBtn = document.getElementById('addProductBtn');
+    const cancelModalBtn = document.getElementById('cancelModalBtn');
+    const productForm = document.getElementById('productForm') as HTMLFormElement;
+
+    function openModal(isEdit = false) {
+      document.getElementById('modalTitle')!.textContent = isEdit ? 'Editar Producto' : 'Agregar Producto';
+      modal?.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      modal?.classList.add('hidden');
+      productForm?.reset();
+      (document.getElementById('productId') as HTMLInputElement).value = '';
+      document.getElementById('formError')?.classList.add('hidden');
+    }
+
+    addProductBtn?.addEventListener('click', () => {
+      (document.getElementById('isActive') as HTMLInputElement).checked = true;
+      openModal(false);
+    });
+
+    cancelModalBtn?.addEventListener('click', closeModal);
+    modalOverlay?.addEventListener('click', closeModal);
+
+    // Form submit
+    productForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formError = document.getElementById('formError')!;
+      formError.classList.add('hidden');
+
+      const productId = (document.getElementById('productId') as HTMLInputElement).value;
+      const productData = {
+        name: (document.getElementById('productName') as HTMLInputElement).value,
+        description: (document.getElementById('description') as HTMLTextAreaElement).value || undefined,
+        subscription_type: (document.getElementById('subscriptionType') as HTMLSelectElement).value as 'monthly' | 'annual' | 'lifetime' | 'trial',
+        price: parseFloat((document.getElementById('price') as HTMLInputElement).value) || 0,
+        currency: 'EUR',
+        sku: (document.getElementById('sku') as HTMLInputElement).value || undefined,
+        is_active: (document.getElementById('isActive') as HTMLInputElement).checked,
+        features: []
+      };
+
+      try {
+        if (productId) {
+          const { error } = await updateProduct(productId, productData);
+          if (error) throw error;
+        } else {
+          const { error } = await addProduct(productData);
+          if (error) throw error;
+        }
+        closeModal();
+        await loadProducts();
+      } catch (error: any) {
+        formError.textContent = error.message || 'Error al guardar el producto';
+        formError.classList.remove('hidden');
+      }
+    });
+
+    // Edit product function - exposed to window
+    (window as any).editProduct = (id: string) => {
+      const product = products.find(p => p.id === id);
+      if (!product) return;
+
+      (document.getElementById('productId') as HTMLInputElement).value = product.id;
+      (document.getElementById('productName') as HTMLInputElement).value = product.name;
+      (document.getElementById('description') as HTMLTextAreaElement).value = product.description || '';
+      (document.getElementById('subscriptionType') as HTMLSelectElement).value = product.subscription_type;
+      (document.getElementById('price') as HTMLInputElement).value = product.price?.toString() || '';
+      (document.getElementById('sku') as HTMLInputElement).value = product.sku || '';
+      (document.getElementById('isActive') as HTMLInputElement).checked = product.is_active;
+      
+      openModal(true);
+    };
+
+    // Delete product functions
+    (window as any).deleteProductConfirm = (id: string) => {
+      productToDelete = id;
+      deleteModal?.classList.remove('hidden');
+    };
+
+    document.getElementById('confirmDeleteBtn')?.addEventListener('click', async () => {
+      if (productToDelete) {
+        try {
+          const { error } = await deleteProduct(productToDelete);
+          if (error) throw error;
+          
+          deleteModal?.classList.add('hidden');
+          productToDelete = null;
+          await loadProducts();
+        } catch (error) {
+          console.error('Error deleting product:', error);
+          alert('Error al eliminar el producto');
+        }
+      }
+    });
+
+    document.getElementById('cancelDeleteBtn')?.addEventListener('click', () => {
+      deleteModal?.classList.add('hidden');
+      productToDelete = null;
+    });
+
+    deleteOverlay?.addEventListener('click', () => {
+      deleteModal?.classList.add('hidden');
+      productToDelete = null;
+    });
+
+    // Initialize - wait for user info before loading products
+    async function init() {
+      await loadUserInfo();
+      await loadProducts();
+    }
+    init();
+  </script>
+</DashboardLayout>

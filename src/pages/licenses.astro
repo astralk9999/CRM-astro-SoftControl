@@ -1,0 +1,582 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Licencias" activeSection="licenses">
+  <div class="px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Licencias</h1>
+          <p class="text-slate-500 dark:text-slate-400 text-sm">Gestión de licencias de clientes</p>
+        </div>
+      </div>
+      <button id="addLicenseBtn" type="button" class="btn-primary inline-flex items-center gap-2 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Nueva Licencia
+      </button>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl p-5 text-white shadow-lg shadow-emerald-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Activas</span>
+          </div>
+          <p id="activeLicensesCount" class="text-3xl font-bold">0</p>
+        </div>
+      </div>
+      <div class="relative overflow-hidden bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl p-5 text-white shadow-lg shadow-amber-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Por Vencer</span>
+          </div>
+          <p id="expiringLicensesCount" class="text-3xl font-bold">0</p>
+        </div>
+      </div>
+      <div class="relative overflow-hidden bg-gradient-to-br from-rose-500 to-red-600 rounded-2xl p-5 text-white shadow-lg shadow-rose-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Expiradas/Revocadas</span>
+          </div>
+          <p id="expiredLicensesCount" class="text-3xl font-bold">0</p>
+        </div>
+      </div>
+      <div class="relative overflow-hidden bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg shadow-violet-500/20">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+            </svg>
+            <span class="text-sm font-medium text-white/80">Total Licencias</span>
+          </div>
+          <p id="totalLicensesCount" class="text-3xl font-bold">0</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="mb-6">
+      <div class="bg-white dark:bg-slate-800/50 rounded-2xl border border-slate-200/80 dark:border-slate-700/50 p-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div class="lg:col-span-2">
+            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Buscar</label>
+            <div class="relative">
+              <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+              <input type="text" id="searchInput" placeholder="Cliente, producto o clave..." class="input-field w-full pl-10">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Estado</label>
+            <select id="filterStatus" class="input-field w-full">
+              <option value="">Todos</option>
+              <option value="active">✅ Activa</option>
+              <option value="inactive">⏸️ Inactiva</option>
+              <option value="expired">⚠️ Expirada</option>
+              <option value="revoked">❌ Revocada</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Producto</label>
+            <select id="filterProduct" class="input-field w-full">
+              <option value="">Todos</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Vencimiento</label>
+            <select id="filterExpiry" class="input-field w-full">
+              <option value="">Todos</option>
+              <option value="expiring">Próximo a vencer (7 días)</option>
+              <option value="never">Sin vencimiento</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-700/50">
+          <p class="text-sm text-slate-500 dark:text-slate-400"><span id="filteredCount" class="font-semibold text-slate-700 dark:text-slate-300">0</span> licencias encontradas</p>
+          <button id="clearFilters" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium transition-colors">Limpiar filtros</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white dark:bg-slate-800/50 rounded-2xl border border-slate-200/80 dark:border-slate-700/50 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700/50">
+          <thead class="bg-slate-50/80 dark:bg-slate-900/50">
+            <tr>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Cliente</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Producto</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Clave</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Activación</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Vencimiento</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Estado</th>
+              <th class="px-6 py-4 text-right text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="licensesTableBody" class="divide-y divide-slate-100 dark:divide-slate-700/50">
+            <tr>
+              <td colspan="7" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                <div class="flex flex-col items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-slate-400 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </div>
+                  <span>Cargando licencias...</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="noLicensesMessage" class="hidden text-center py-12">
+        <div class="w-16 h-16 mx-auto rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center mb-4">
+          <svg class="h-8 w-8 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+          </svg>
+        </div>
+        <h3 class="text-sm font-semibold text-slate-900 dark:text-white">No hay licencias</h3>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Comienza creando una nueva licencia.</p>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit License Modal -->
+  <div id="licenseModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4">
+      <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" id="modalOverlay"></div>
+      <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-md w-full p-6">
+        <h3 id="modalTitle" class="text-xl font-bold text-slate-900 dark:text-white mb-6">Nueva Licencia</h3>
+        <form id="licenseForm" class="space-y-4">
+          <input type="hidden" id="licenseId" />
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente *</label>
+            <select id="customer_id" class="input-field w-full" required>
+              <option value="">Seleccionar cliente</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Producto *</label>
+            <select id="product_id" class="input-field w-full" required>
+              <option value="">Seleccionar producto</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Máx. Activaciones</label>
+              <input type="number" id="maxActivations" class="input-field w-full" value="1" min="1" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Estado</label>
+              <select id="licenseStatus" class="input-field w-full">
+                <option value="active">Activa</option>
+                <option value="inactive">Inactiva</option>
+                <option value="expired">Expirada</option>
+                <option value="revoked">Revocada</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha Expiración</label>
+            <input type="date" id="expirationDate" class="input-field w-full" />
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Dejar vacío para licencia sin vencimiento</p>
+          </div>
+          <div id="formError" class="hidden bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400 px-4 py-3 rounded-lg text-sm"></div>
+          <div class="flex gap-3 pt-4">
+            <button type="button" id="cancelModalBtn" class="btn-secondary flex-1">Cancelar</button>
+            <button type="submit" class="btn-primary flex-1">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revoke Confirmation Modal -->
+  <div id="revokeModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4">
+      <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" id="revokeOverlay"></div>
+      <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-md w-full p-6">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center mr-4">
+            <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Revocar Licencia</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">La licencia será desactivada permanentemente</p>
+          </div>
+        </div>
+        <div class="flex gap-3 mt-6">
+          <button type="button" id="cancelRevokeBtn" class="btn-secondary flex-1">Cancelar</button>
+          <button type="button" id="confirmRevokeBtn" class="btn-danger flex-1">Revocar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { getLicenses, addLicense, updateLicense, revokeLicense, deleteLicense, getCustomers, getProducts, getCurrentUserWithProfile } from '../lib/supabase';
+    import type { LicenseFull, Customer, Product } from '../lib/supabase';
+    import { format } from 'date-fns';
+    import { es } from 'date-fns/locale';
+
+    let licenses: LicenseFull[] = [];
+    let customers: Customer[] = [];
+    let products: Product[] = [];
+    let isUserAdmin = false;
+    let licenseToRevoke: string | null = null;
+
+    const statusLabels: Record<string, string> = {
+      active: 'Activa',
+      inactive: 'Inactiva',
+      expired: 'Expirada',
+      revoked: 'Revocada'
+    };
+
+    const statusClasses: Record<string, string> = {
+      active: 'badge-success',
+      inactive: 'badge-warning',
+      expired: 'badge-danger',
+      revoked: 'badge-danger'
+    };
+
+    // Generate unique license key
+    function generateLicenseKey(): string {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      const segments = 4;
+      const segmentLength = 4;
+      const parts = [];
+      for (let i = 0; i < segments; i++) {
+        let part = '';
+        for (let j = 0; j < segmentLength; j++) {
+          part += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        parts.push(part);
+      }
+      return parts.join('-');
+    }
+
+    async function loadUserInfo() {
+      const { user, profile } = await getCurrentUserWithProfile();
+      if (user && profile) {
+        isUserAdmin = profile.role === 'admin' || profile.role === 'super_admin';
+        // Staff role gets read-only mode
+        if (profile.role === 'staff') {
+          const addBtn = document.getElementById('addLicenseBtn');
+          if (addBtn) addBtn.style.display = 'none';
+        }
+      }
+    }
+
+    async function loadData() {
+      [licenses, customers, products] = await Promise.all([
+        getLicenses(),
+        getCustomers(),
+        getProducts()
+      ]);
+      displayLicenses(licenses);
+      populateSelects();
+      populateProductFilter();
+      updateStats();
+      const filteredCountEl = document.getElementById('filteredCount');
+      if (filteredCountEl) filteredCountEl.textContent = licenses.length.toString();
+    }
+
+    function updateStats() {
+      const sevenDaysFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      const today = new Date();
+      
+      const activeCount = licenses.filter(l => l.status === 'active').length;
+      const expiringCount = licenses.filter(l => 
+        l.status === 'active' && 
+        l.expiration_date && 
+        new Date(l.expiration_date) <= sevenDaysFromNow && 
+        new Date(l.expiration_date) > today
+      ).length;
+      const expiredCount = licenses.filter(l => l.status === 'expired' || l.status === 'revoked').length;
+      const totalCount = licenses.length;
+
+      const activeLicensesEl = document.getElementById('activeLicensesCount');
+      const expiringLicensesEl = document.getElementById('expiringLicensesCount');
+      const expiredLicensesEl = document.getElementById('expiredLicensesCount');
+      const totalLicensesEl = document.getElementById('totalLicensesCount');
+
+      if (activeLicensesEl) activeLicensesEl.textContent = activeCount.toString();
+      if (expiringLicensesEl) expiringLicensesEl.textContent = expiringCount.toString();
+      if (expiredLicensesEl) expiredLicensesEl.textContent = expiredCount.toString();
+      if (totalLicensesEl) totalLicensesEl.textContent = totalCount.toString();
+    }
+
+    function populateSelects() {
+      const customerSelect = document.getElementById('customer_id') as HTMLSelectElement;
+      const productSelect = document.getElementById('product_id') as HTMLSelectElement;
+      
+      if (customerSelect) {
+        customerSelect.innerHTML = '<option value="">Seleccionar cliente</option>' + 
+          customers.map(c => `<option value="${c.id}">${c.full_name} (${c.email})</option>`).join('');
+      }
+      
+      if (productSelect) {
+        productSelect.innerHTML = '<option value="">Seleccionar producto</option>' + 
+          products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+      }
+    }
+
+    function displayLicenses(licensesToShow: LicenseFull[]) {
+      const tbody = document.getElementById('licensesTableBody');
+      const noLicensesMsg = document.getElementById('noLicensesMessage');
+      
+      if (!tbody) return;
+
+      if (licensesToShow.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+              No hay licencias registradas
+            </td>
+          </tr>
+        `;
+        if (noLicensesMsg) noLicensesMsg.classList.remove('hidden');
+        return;
+      }
+
+      if (noLicensesMsg) noLicensesMsg.classList.add('hidden');
+
+      tbody.innerHTML = licensesToShow.map(license => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+          <td class="px-6 py-4">
+            <div class="flex items-center">
+              <div class="h-10 w-10 flex-shrink-0 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
+                <span class="text-indigo-600 dark:text-indigo-400 font-semibold text-sm">${license.customer_name?.charAt(0).toUpperCase() || '?'}</span>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-slate-900 dark:text-white">${license.customer_name || '-'}</div>
+                <div class="text-sm text-slate-500 dark:text-slate-400">${license.customer_email || ''}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 text-sm text-slate-900 dark:text-white">${license.product_name || '-'}</td>
+          <td class="px-6 py-4">
+            <code class="text-xs bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded font-mono text-slate-700 dark:text-slate-300">${license.license_key}</code>
+          </td>
+          <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
+            ${license.activation_date ? format(new Date(license.activation_date), 'dd/MM/yyyy') : '-'}
+          </td>
+          <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
+            ${license.expiration_date ? format(new Date(license.expiration_date), 'dd/MM/yyyy') : 'Sin vencimiento'}
+          </td>
+          <td class="px-6 py-4">
+            <span class="${statusClasses[license.status] || 'badge-info'}">${statusLabels[license.status] || license.status}</span>
+          </td>
+          <td class="px-6 py-4 text-right text-sm font-medium space-x-2">
+            ${isUserAdmin && license.status === 'active' ? `
+              <button onclick="window.revokeLicenseConfirm('${license.id}')" class="text-rose-600 hover:text-rose-900 dark:text-rose-400">Revocar</button>
+            ` : ''}
+            ${isUserAdmin ? `
+              <button onclick="window.confirmDeleteLicense('${license.id}', '${license.license_key}')" class="text-red-600 hover:text-red-900 dark:text-red-400">Eliminar</button>
+            ` : ''}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Filter functionality
+    function applyFilters() {
+      const statusFilter = (document.getElementById('filterStatus') as HTMLSelectElement)?.value;
+      const productFilter = (document.getElementById('filterProduct') as HTMLSelectElement)?.value;
+      const expiryFilter = (document.getElementById('filterExpiry') as HTMLSelectElement)?.value;
+      const searchTerm = (document.getElementById('searchInput') as HTMLInputElement)?.value.toLowerCase();
+
+      let filtered = licenses;
+
+      if (statusFilter) {
+        filtered = filtered.filter(l => l.status === statusFilter);
+      }
+
+      if (productFilter) {
+        filtered = filtered.filter(l => l.product_id === productFilter);
+      }
+
+      if (expiryFilter === 'expiring') {
+        const sevenDaysFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        filtered = filtered.filter(l => 
+          l.expiration_date && new Date(l.expiration_date) <= sevenDaysFromNow && new Date(l.expiration_date) > new Date()
+        );
+      } else if (expiryFilter === 'never') {
+        filtered = filtered.filter(l => !l.expiration_date);
+      }
+
+      if (searchTerm) {
+        filtered = filtered.filter(l => 
+          (l.customer_name && l.customer_name.toLowerCase().includes(searchTerm)) ||
+          (l.customer_email && l.customer_email.toLowerCase().includes(searchTerm)) ||
+          (l.product_name && l.product_name.toLowerCase().includes(searchTerm)) ||
+          (l.license_key && l.license_key.toLowerCase().includes(searchTerm))
+        );
+      }
+
+      const filteredCountEl = document.getElementById('filteredCount');
+      if (filteredCountEl) filteredCountEl.textContent = filtered.length.toString();
+
+      displayLicenses(filtered);
+    }
+
+    function populateProductFilter() {
+      const select = document.getElementById('filterProduct') as HTMLSelectElement;
+      if (select && products.length > 0) {
+        select.innerHTML = '<option value="">Todos</option>' + 
+          products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+      }
+    }
+
+    document.getElementById('filterStatus')?.addEventListener('change', applyFilters);
+    document.getElementById('filterProduct')?.addEventListener('change', applyFilters);
+    document.getElementById('filterExpiry')?.addEventListener('change', applyFilters);
+    document.getElementById('searchInput')?.addEventListener('input', applyFilters);
+    
+    document.getElementById('clearFilters')?.addEventListener('click', () => {
+      (document.getElementById('filterStatus') as HTMLSelectElement).value = '';
+      (document.getElementById('filterProduct') as HTMLSelectElement).value = '';
+      (document.getElementById('filterExpiry') as HTMLSelectElement).value = '';
+      (document.getElementById('searchInput') as HTMLInputElement).value = '';
+      applyFilters();
+    });
+
+    // Modal functionality
+    const modal = document.getElementById('licenseModal');
+    const revokeModal = document.getElementById('revokeModal');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const revokeOverlay = document.getElementById('revokeOverlay');
+    const addLicenseBtn = document.getElementById('addLicenseBtn');
+    const cancelModalBtn = document.getElementById('cancelModalBtn');
+    const licenseForm = document.getElementById('licenseForm') as HTMLFormElement;
+
+    function openModal() {
+      document.getElementById('modalTitle')!.textContent = 'Nueva Licencia';
+      modal?.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      modal?.classList.add('hidden');
+      licenseForm?.reset();
+      (document.getElementById('licenseId') as HTMLInputElement).value = '';
+      document.getElementById('formError')?.classList.add('hidden');
+    }
+
+    addLicenseBtn?.addEventListener('click', openModal);
+    cancelModalBtn?.addEventListener('click', closeModal);
+    modalOverlay?.addEventListener('click', closeModal);
+
+    // Form submit
+    licenseForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formError = document.getElementById('formError')!;
+      formError.classList.add('hidden');
+
+      const licenseId = (document.getElementById('licenseId') as HTMLInputElement).value;
+      const licenseData = {
+        customer_id: (document.getElementById('customer_id') as HTMLSelectElement).value,
+        product_id: (document.getElementById('product_id') as HTMLSelectElement).value,
+        license_key: generateLicenseKey(),
+        status: (document.getElementById('licenseStatus') as HTMLSelectElement).value as 'active' | 'inactive' | 'expired' | 'revoked',
+        max_activations: parseInt((document.getElementById('maxActivations') as HTMLInputElement).value) || 1,
+        current_activations: 0,
+        expiration_date: (document.getElementById('expirationDate') as HTMLInputElement).value || undefined,
+        metadata: {}
+      };
+
+      try {
+        if (licenseId) {
+          const { error } = await updateLicense(licenseId, licenseData);
+          if (error) throw error;
+        } else {
+          const { error } = await addLicense(licenseData);
+          if (error) throw error;
+        }
+        closeModal();
+        await loadData();
+      } catch (error: any) {
+        formError.textContent = error.message || 'Error al guardar la licencia';
+        formError.classList.remove('hidden');
+      }
+    });
+
+    // Delete license
+    (window as any).confirmDeleteLicense = async (id: string, licenseKey: string) => {
+      if (confirm(`¿Estás seguro de que deseas eliminar la licencia "${licenseKey}"?\n\nEsta acción no se puede deshacer.`)) {
+        try {
+          const { error } = await deleteLicense(id);
+          if (error) throw error;
+          await loadData();
+        } catch (error: any) {
+          alert('Error al eliminar licencia: ' + (error.message || 'Error desconocido'));
+        }
+      }
+    };
+
+    // Revoke license
+    (window as any).revokeLicenseConfirm = (id: string) => {
+      licenseToRevoke = id;
+      revokeModal?.classList.remove('hidden');
+    };
+
+    document.getElementById('confirmRevokeBtn')?.addEventListener('click', async () => {
+      if (licenseToRevoke) {
+        try {
+          const { error } = await revokeLicense(licenseToRevoke);
+          if (error) throw error;
+          revokeModal?.classList.add('hidden');
+          licenseToRevoke = null;
+          await loadData();
+        } catch (error) {
+          console.error('Error revoking license:', error);
+          alert('Error al revocar la licencia');
+        }
+      }
+    });
+
+    document.getElementById('cancelRevokeBtn')?.addEventListener('click', () => {
+      revokeModal?.classList.add('hidden');
+      licenseToRevoke = null;
+    });
+
+    revokeOverlay?.addEventListener('click', () => {
+      revokeModal?.classList.add('hidden');
+      licenseToRevoke = null;
+    });
+
+    // Initialize - wait for user info before loading data
+    async function init() {
+      await loadUserInfo();
+      await loadData();
+    }
+    init();
+  </script>
+</DashboardLayout>

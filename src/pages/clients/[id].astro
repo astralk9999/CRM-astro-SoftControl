@@ -1,0 +1,174 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+
+const { id } = Astro.params;
+---
+
+<DashboardLayout title="Detalle de Cliente" activeSection="clients">
+  <div class="px-4 sm:px-6 lg:px-8">
+    <!-- Back button -->
+    <div class="mb-4">
+      <a href="/clients" class="text-sm text-gray-500 hover:text-gray-700">
+        ← Volver a clientes
+      </a>
+    </div>
+
+    <!-- Client details -->
+    <div id="clientDetails" class="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Información del Cliente</h3>
+      </div>
+      <div class="border-t border-gray-200">
+        <dl>
+          <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Nombre completo</dt>
+            <dd id="clientName" class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">-</dd>
+          </div>
+          <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Correo electrónico</dt>
+            <dd id="clientEmail" class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">-</dd>
+          </div>
+          <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Teléfono</dt>
+            <dd id="clientPhone" class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">-</dd>
+          </div>
+          <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Empresa</dt>
+            <dd id="clientCompany" class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">-</dd>
+          </div>
+          <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Fecha de registro</dt>
+            <dd id="clientCreatedAt" class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">-</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- Client licenses -->
+    <div class="mt-8">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Licencias del Cliente</h3>
+      <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Producto
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Tipo
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Fecha Inicio
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Fecha Fin
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Estado
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Precio
+              </th>
+            </tr>
+          </thead>
+          <tbody id="licensesTableBody" class="bg-white divide-y divide-gray-200">
+            <!-- Licenses will be loaded here -->
+          </tbody>
+        </table>
+        <div id="noLicensesMessage" class="hidden text-center py-8">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-semibold text-gray-900">Sin licencias</h3>
+          <p class="mt-1 text-sm text-gray-500">Este cliente no tiene licencias asignadas.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script define:vars={{ clientId: id }}>
+    import { getClient, getLicensesByClient } from '../../lib/supabase';
+    import { format } from 'date-fns';
+    import { es } from 'date-fns/locale';
+
+    async function loadClientDetails() {
+      try {
+        const client = await getClient(clientId);
+        
+        if (!client) {
+          window.location.href = '/clients';
+          return;
+        }
+
+        document.getElementById('clientName')!.textContent = client.name;
+        document.getElementById('clientEmail')!.textContent = client.email;
+        document.getElementById('clientPhone')!.textContent = client.phone || 'No especificado';
+        document.getElementById('clientCompany')!.textContent = client.company || 'No especificado';
+        document.getElementById('clientCreatedAt')!.textContent = format(new Date(client.created_at), 'dd MMMM yyyy', { locale: es });
+      } catch (error) {
+        console.error('Error loading client details:', error);
+        window.location.href = '/clients';
+      }
+    }
+
+    async function loadClientLicenses() {
+      try {
+        const licenses = await getLicensesByClient(clientId);
+        const tbody = document.getElementById('licensesTableBody');
+        const noLicensesMsg = document.getElementById('noLicensesMessage');
+        
+        if (!tbody) return;
+
+        if (licenses.length === 0) {
+          tbody.innerHTML = '';
+          if (noLicensesMsg) {
+            noLicensesMsg.classList.remove('hidden');
+          }
+          return;
+        }
+
+        if (noLicensesMsg) {
+          noLicensesMsg.classList.add('hidden');
+        }
+
+        tbody.innerHTML = licenses.map(license => {
+          const statusColor = license.status === 'activa' ? 'green' : 
+                             license.status === 'pendiente_pago' ? 'yellow' : 'gray';
+          const statusText = license.status === 'activa' ? 'Activa' : 
+                            license.status === 'pendiente_pago' ? 'Pendiente de Pago' : 'Inactiva';
+          
+          return `
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                ${license.product_name}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                ${license.type === 'licencia_unica' ? 'Licencia Única' : 'Suscripción'}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                ${format(new Date(license.start_date), 'dd/MM/yyyy')}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                ${license.end_date ? format(new Date(license.end_date), 'dd/MM/yyyy') : '-'}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-${statusColor}-100 text-${statusColor}-800">
+                  ${statusText}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                $${license.price ? license.price.toFixed(2) : '0.00'}
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (error) {
+        console.error('Error loading client licenses:', error);
+      }
+    }
+
+    // Load data on page load
+    loadClientDetails();
+    loadClientLicenses();
+  </script>
+</DashboardLayout>

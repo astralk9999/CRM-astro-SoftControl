@@ -1,0 +1,144 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Iniciar Sesión">
+  <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-100 dark:from-slate-900 dark:via-indigo-950/20 dark:to-slate-900">
+    <div class="max-w-md w-full">
+      <!-- Logo y título -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-indigo-500/10 mb-6">
+          <img src="/images/logo-icon.png" alt="SoftControl" class="h-16 w-16 rounded-xl" />
+        </div>
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Bienvenido de nuevo</h2>
+        <p class="mt-2 text-slate-500 dark:text-slate-400">Ingresa a tu cuenta para continuar</p>
+      </div>
+
+      <!-- Card del formulario -->
+      <div class="bg-white dark:bg-slate-800/50 rounded-2xl border border-slate-200/80 dark:border-slate-700/50 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden">
+        <form id="loginForm" class="p-8 space-y-6">
+          <div class="space-y-4">
+            <div>
+              <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Correo electrónico</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                class="input-field w-full"
+                placeholder="tu@email.com"
+              />
+            </div>
+            <div>
+              <label for="password" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Contraseña</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+                class="input-field w-full"
+                placeholder="••••••••"
+              />
+            </div>
+          </div>
+
+          <div id="errorMessage" class="hidden bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 px-4 py-3 rounded-xl text-sm"></div>
+          <div id="successMessage" class="hidden bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 px-4 py-3 rounded-xl text-sm"></div>
+
+          <button
+            type="submit"
+            class="btn-primary w-full shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all"
+          >
+            Iniciar Sesión
+          </button>
+
+          <div class="text-sm text-center pt-4 border-t border-slate-100 dark:border-slate-700/50">
+            <span class="text-slate-500 dark:text-slate-400">¿No tienes cuenta?</span>
+            <a href="/register" class="ml-1 font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transition-colors">
+              Regístrate aquí
+            </a>
+          </div>
+        </form>
+      </div>
+
+      <p class="text-center text-xs text-slate-400 dark:text-slate-500 mt-6">
+        © 2024 SoftControl. Todos los derechos reservados.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    import { signIn } from '../lib/supabase';
+    import { checkAuth, isStaffUser, isCustomer } from '../lib/auth';
+
+    // Redirect based on user type
+    function redirectByUserType(user: any) {
+      if (isStaffUser(user)) {
+        window.location.href = '/dashboard';
+      } else if (isCustomer(user)) {
+        window.location.href = '/mi-cuenta';
+      } else {
+        // User authenticated but no profile/customer - show error
+        const errorMessage = document.getElementById('errorMessage');
+        if (errorMessage) {
+          errorMessage.textContent = 'Tu cuenta no está configurada correctamente. Contacta soporte.';
+          errorMessage.classList.remove('hidden');
+        }
+      }
+    }
+
+    // Check if already authenticated
+    async function checkIfAuthenticated() {
+      const user = await checkAuth();
+      if (user && (isStaffUser(user) || isCustomer(user))) {
+        redirectByUserType(user);
+      }
+    }
+
+    checkIfAuthenticated();
+
+    const loginForm = document.getElementById('loginForm');
+
+    loginForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = (document.getElementById('email') as HTMLInputElement)?.value;
+      const password = (document.getElementById('password') as HTMLInputElement)?.value;
+      const errorMessage = document.getElementById('errorMessage');
+      const successMessage = document.getElementById('successMessage');
+
+      if (errorMessage) errorMessage.classList.add('hidden');
+      if (successMessage) successMessage.classList.add('hidden');
+
+      try {
+        const { data, error } = await signIn(email, password);
+        
+        if (error) {
+          if (errorMessage) {
+            errorMessage.textContent = 'El correo no existe o la contraseña es incorrecta. Revisa tus datos o regístrate.';
+            errorMessage.classList.remove('hidden');
+          }
+          return;
+        }
+
+        if (successMessage) {
+          successMessage.textContent = '¡Inicio de sesión exitoso! Redirigiendo...';
+          successMessage.classList.remove('hidden');
+        }
+
+        // Check user type and redirect accordingly
+        const user = await checkAuth();
+        setTimeout(() => {
+          redirectByUserType(user);
+        }, 1000);
+      } catch (err) {
+        if (errorMessage) {
+          errorMessage.textContent = 'Error al iniciar sesión. Por favor, intenta de nuevo.';
+          errorMessage.classList.remove('hidden');
+        }
+      }
+    });
+  </script>
+</Layout>

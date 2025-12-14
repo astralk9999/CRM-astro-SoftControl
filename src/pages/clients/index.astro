@@ -1,0 +1,348 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Clientes" activeSection="clients">
+  <div class="px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="sm:flex sm:items-center">
+      <div class="sm:flex-auto">
+        <h1 class="text-2xl font-semibold leading-6 text-gray-900">Clientes</h1>
+        <p class="mt-2 text-sm text-gray-700">
+          Listado de todos los clientes registrados en el sistema
+        </p>
+      </div>
+      <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+        <button id="addClientBtn" type="button" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          Agregar Cliente
+        </button>
+      </div>
+    </div>
+
+    <!-- Search and filters -->
+    <div class="mt-6">
+      <div class="flex gap-4">
+        <div class="flex-1">
+          <label for="search" class="sr-only">Buscar</label>
+          <input type="text" name="search" id="searchInput" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Buscar por nombre, email o empresa...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="mt-8 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-300">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Nombre</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Email</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Teléfono</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Empresa</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Fecha Registro</th>
+                  <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                    <span class="sr-only">Acciones</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="clientsTableBody" class="divide-y divide-gray-200 bg-white">
+                <!-- Clients will be loaded here -->
+              </tbody>
+            </table>
+            <div id="noClientsMessage" class="hidden text-center py-12">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              <h3 class="mt-2 text-sm font-semibold text-gray-900">No hay clientes</h3>
+              <p class="mt-1 text-sm text-gray-500">Comienza agregando un nuevo cliente.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Client Modal -->
+  <div id="clientModal" class="hidden relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+      <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <div class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+          <div>
+            <div class="mt-3 text-center sm:mt-5">
+              <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">
+                <span id="modalTitle">Agregar Cliente</span>
+              </h3>
+              <div class="mt-6">
+                <form id="clientForm" class="space-y-4">
+                  <input type="hidden" id="clientId" name="clientId">
+                  
+                  <div class="text-left">
+                    <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Nombre completo</label>
+                    <div class="mt-2">
+                      <input type="text" name="name" id="name" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    </div>
+                  </div>
+
+                  <div class="text-left">
+                    <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
+                    <div class="mt-2">
+                      <input type="email" name="email" id="clientEmail" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    </div>
+                  </div>
+
+                  <div class="text-left">
+                    <label for="phone" class="block text-sm font-medium leading-6 text-gray-900">Teléfono</label>
+                    <div class="mt-2">
+                      <input type="tel" name="phone" id="phone" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    </div>
+                  </div>
+
+                  <div class="text-left">
+                    <label for="company" class="block text-sm font-medium leading-6 text-gray-900">Empresa</label>
+                    <div class="mt-2">
+                      <input type="text" name="company" id="company" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    </div>
+                  </div>
+
+                  <div id="formError" class="hidden text-red-600 text-sm"></div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+            <button type="button" id="saveClientBtn" class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2">
+              Guardar
+            </button>
+            <button type="button" id="cancelModalBtn" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="hidden relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+      <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <div class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+          <div class="sm:flex sm:items-start">
+            <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+              <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+              </svg>
+            </div>
+            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+              <h3 class="text-base font-semibold leading-6 text-gray-900">Eliminar Cliente</h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">¿Estás seguro de que deseas eliminar este cliente? Esta acción no se puede deshacer.</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+            <button type="button" id="confirmDeleteBtn" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">
+              Eliminar
+            </button>
+            <button type="button" id="cancelDeleteBtn" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { getClients, addClient, updateClient, deleteClient, getCurrentUserWithProfile } from '../../lib/supabase';
+    import { format } from 'date-fns';
+    import { es } from 'date-fns/locale';
+
+    let clients: any[] = [];
+    let currentUser: any = null;
+    let isUserAdmin = false;
+    let clientToDelete: string | null = null;
+
+    // Load user info
+    async function loadUserInfo() {
+      const { user, profile } = await getCurrentUserWithProfile();
+      if (user && profile) {
+        currentUser = user;
+        isUserAdmin = profile.role === 'admin' || profile.role === 'super_admin';
+      }
+    }
+
+    // Load clients
+    async function loadClients() {
+      clients = await getClients();
+      displayClients(clients);
+    }
+
+    // Display clients in table
+    function displayClients(clientsToShow: any[]) {
+      const tbody = document.getElementById('clientsTableBody');
+      const noClientsMsg = document.getElementById('noClientsMessage');
+      
+      if (!tbody) return;
+
+      if (clientsToShow.length === 0) {
+        tbody.innerHTML = '';
+        if (noClientsMsg) {
+          noClientsMsg.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (noClientsMsg) {
+        noClientsMsg.classList.add('hidden');
+      }
+
+      tbody.innerHTML = clientsToShow.map(client => `
+        <tr>
+          <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+            ${client.name}
+          </td>
+          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+            ${client.email}
+          </td>
+          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+            ${client.phone || '-'}
+          </td>
+          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+            ${client.company || '-'}
+          </td>
+          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+            ${format(new Date(client.created_at), 'dd MMM yyyy', { locale: es })}
+          </td>
+          <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+            <a href="/clients/${client.id}" class="text-indigo-600 hover:text-indigo-900 mr-3">Ver</a>
+            ${isUserAdmin ? `
+              <button onclick="editClient('${client.id}')" class="text-indigo-600 hover:text-indigo-900 mr-3">Editar</button>
+              <button onclick="deleteClientConfirm('${client.id}')" class="text-red-600 hover:text-red-900">Eliminar</button>
+            ` : ''}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const searchTerm = (e.target as HTMLInputElement).value.toLowerCase();
+        const filtered = clients.filter(client => 
+          client.name.toLowerCase().includes(searchTerm) ||
+          client.email.toLowerCase().includes(searchTerm) ||
+          (client.company && client.company.toLowerCase().includes(searchTerm))
+        );
+        displayClients(filtered);
+      });
+    }
+
+    // Modal functionality
+    const modal = document.getElementById('clientModal');
+    const deleteModal = document.getElementById('deleteModal');
+    const addClientBtn = document.getElementById('addClientBtn');
+    const cancelModalBtn = document.getElementById('cancelModalBtn');
+    const saveClientBtn = document.getElementById('saveClientBtn');
+    const clientForm = document.getElementById('clientForm') as HTMLFormElement;
+
+    addClientBtn?.addEventListener('click', () => {
+      document.getElementById('modalTitle')!.textContent = 'Agregar Cliente';
+      clientForm?.reset();
+      (document.getElementById('clientId') as HTMLInputElement).value = '';
+      modal?.classList.remove('hidden');
+    });
+
+    cancelModalBtn?.addEventListener('click', () => {
+      modal?.classList.add('hidden');
+    });
+
+    saveClientBtn?.addEventListener('click', async () => {
+      const formData = new FormData(clientForm);
+      const clientId = formData.get('clientId') as string;
+      const clientData = {
+        name: formData.get('name') as string,
+        email: formData.get('email') as string,
+        phone: formData.get('phone') as string || undefined,
+        company: formData.get('company') as string || undefined,
+      };
+
+      const formError = document.getElementById('formError');
+      if (formError) formError.classList.add('hidden');
+
+      try {
+        if (clientId) {
+          // Update existing client
+          const { error } = await updateClient(clientId, clientData);
+          if (error) throw error;
+        } else {
+          // Add new client
+          const { error } = await addClient({
+            ...clientData,
+            created_by: currentUser?.id
+          });
+          if (error) throw error;
+        }
+
+        modal?.classList.add('hidden');
+        await loadClients();
+      } catch (error: any) {
+        if (formError) {
+          formError.textContent = error.message || 'Error al guardar el cliente';
+          formError.classList.remove('hidden');
+        }
+      }
+    });
+
+    // Edit client function
+    window.editClient = async (id: string) => {
+      const client = clients.find(c => c.id === id);
+      if (!client) return;
+
+      document.getElementById('modalTitle')!.textContent = 'Editar Cliente';
+      (document.getElementById('clientId') as HTMLInputElement).value = client.id;
+      (document.getElementById('name') as HTMLInputElement).value = client.name;
+      (document.getElementById('clientEmail') as HTMLInputElement).value = client.email;
+      (document.getElementById('phone') as HTMLInputElement).value = client.phone || '';
+      (document.getElementById('company') as HTMLInputElement).value = client.company || '';
+      
+      modal?.classList.remove('hidden');
+    };
+
+    // Delete client functions
+    window.deleteClientConfirm = (id: string) => {
+      clientToDelete = id;
+      deleteModal?.classList.remove('hidden');
+    };
+
+    document.getElementById('confirmDeleteBtn')?.addEventListener('click', async () => {
+      if (clientToDelete) {
+        try {
+          const { error } = await deleteClient(clientToDelete);
+          if (error) throw error;
+          
+          deleteModal?.classList.add('hidden');
+          clientToDelete = null;
+          await loadClients();
+        } catch (error) {
+          console.error('Error deleting client:', error);
+          alert('Error al eliminar el cliente');
+        }
+      }
+    });
+
+    document.getElementById('cancelDeleteBtn')?.addEventListener('click', () => {
+      deleteModal?.classList.add('hidden');
+      clientToDelete = null;
+    });
+
+    // Initialize
+    loadUserInfo();
+    loadClients();
+  </script>
+</DashboardLayout>
